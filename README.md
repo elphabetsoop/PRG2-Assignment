@@ -26,3 +26,34 @@ _9. Topping (VALERY)_
 ### Advanced features
 a) Process an order & checkout (SYN)  
 b) Display monthy charged amounts breakdown & total charged amounts for the year (VALERY)
+
+### basic git workflow
+* clone repo
+   ```
+  git clone https://github.com/elphabetsoop/CSS-Assignment.git
+   ```
+* check status
+  ```
+  git status
+  ```
+* update local repo with changes
+  ```
+  git pull
+  ```
+   
+1. after adding new files (can skip this if you only modified files):
+   ```
+   git add .
+   ```
+   or
+   ```
+   git add <file name>
+   ```
+3. commit changes
+   ```
+   git commit -a -m "<commit message>"
+   ```
+5. push changes to repo
+   ```
+   git push
+   ```
