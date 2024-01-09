@@ -24,5 +24,5 @@ _9. Topping (VALERY)_
 6\. Modify order details (SYN)
 
 ### Advanced features
-a) Process an order & checkout (VALERY)  
+a) Process an order & checkout (SYN)  
 b) Display monthy charged amounts breakdown & total charged amounts for the year (VALERY)
