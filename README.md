@@ -30,7 +30,7 @@ b) Display monthy charged amounts breakdown & total charged amounts for the year
 ### basic git workflow
 * clone repo
    ```
-  git clone https://github.com/elphabetsoop/CSS-Assignment.git
+  git clone https://github.com/elphabetsoop/PRG2-Assignment.git
    ```
 * check status
   ```
