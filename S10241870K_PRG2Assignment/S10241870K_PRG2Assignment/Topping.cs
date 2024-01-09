@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S10241870K_PRG2Assignment
+namespace S10241870K_PRG2Assignment //val
 {
-    internal class Topping
+    internal class Topping 
     {
         public string Type { get; set; }
         public Topping() { }
