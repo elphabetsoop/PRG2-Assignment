@@ -1,5 +1,6 @@
 # PRG2-Assignment
 Deadline:  Week 15, 31/01/24 23:59
+Remember to input comments!
 
 ### Classes
 1. Customer
