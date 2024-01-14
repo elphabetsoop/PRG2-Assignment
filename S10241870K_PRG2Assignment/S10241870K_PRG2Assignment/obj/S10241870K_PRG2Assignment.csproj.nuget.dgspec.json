@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {}
+    "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {}
   },
   "projects": {
-    "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {
+    "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
+        "projectUniqueName": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
         "projectName": "S10241870K_PRG2Assignment",
-        "projectPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
+        "projectPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
         "packagesPath": "C:\\Users\\karee\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\obj\\",
+        "outputPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\karee\\AppData\\Roaming\\NuGet\\NuGet.Config",
