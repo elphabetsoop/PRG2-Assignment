@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {}
   },
   "projects": {
@@ -12,9 +13,26 @@
         "projectPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
         "packagesPath": "C:\\Users\\karee\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\karee\\OneDrive\\Documents\\year 1\\sem 2\\programming 2\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\obj\\",
+=======
+    "D:\\files\\Documents\\Y1S2 PRG II\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {}
+  },
+  "projects": {
+    "D:\\files\\Documents\\Y1S2 PRG II\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\files\\Documents\\Y1S2 PRG II\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
+        "projectName": "S10241870K_PRG2Assignment",
+        "projectPath": "D:\\files\\Documents\\Y1S2 PRG II\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment.csproj",
+        "packagesPath": "C:\\Users\\elpha\\.nuget\\packages\\",
+        "outputPath": "D:\\files\\Documents\\Y1S2 PRG II\\PRG2-Assignment\\S10241870K_PRG2Assignment\\S10241870K_PRG2Assignment\\obj\\",
+>>>>>>> 7704b29885fc8d0e3548203c58671dc7121bbc35
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\karee\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\elpha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -55,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
