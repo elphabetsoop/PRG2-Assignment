@@ -30,10 +30,6 @@ namespace S10241870K_PRG2Assignment //syn
             Dob = dob;
         }
 
-        public Order MakeOrder()
-        {
-            //logic
-        }
 
         public bool IsBirthday()
         {
@@ -49,7 +45,7 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob}s";
+            return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob.ToString("dd/MM/yyyy")}\t";
         }
     }
 }

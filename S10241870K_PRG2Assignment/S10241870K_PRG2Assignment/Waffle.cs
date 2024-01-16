@@ -9,12 +9,18 @@ namespace S10241870K_PRG2Assignment //val
 {
     internal class Waffle : IceCream 
     {
+
+        //property
         public string WaffleFlavour { get; set; }
+
+        //constructor 
         public Waffle() { }
         public Waffle(string option, int scoops, List<Flavour> flavours, List<Topping> toppings, string waffleflavour):base(option, scoops, flavours, toppings)
         {
             WaffleFlavour = waffleflavour; 
         }
+
+        //methods 
         public override double CalculatePrice()
         {
             double price;

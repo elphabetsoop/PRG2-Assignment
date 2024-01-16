@@ -8,12 +8,17 @@ namespace S10241870K_PRG2Assignment //val
 {
     internal class Cone : IceCream
     {
+        //property
         public bool Dipped { get; set; }
+
+        //constructor 
         public Cone() { }
         public Cone(string option, int scoops, List<Flavour> flavours, List<Topping> toppings, bool dipped):base(option, scoops, flavours, toppings)
         {
             Dipped = dipped;
         }
+
+        //methods 
         public override double CalculatePrice()
         {
             double price; 

@@ -9,9 +9,13 @@ namespace S10241870K_PRG2Assignment //val
 {
     internal class Flavour
     {
+
+        //properties 
         public string Type { get; set; }
         public bool Premium { get; set; }
         public int Quantity { get; set; }
+
+        //constructor 
         public Flavour() { }    
         public Flavour(string type, bool premium, int quantity)
         {
@@ -19,6 +23,8 @@ namespace S10241870K_PRG2Assignment //val
             Premium = premium;
             Quantity = quantity;
         }
+
+        //method 
         public override string ToString()
         {
             return "Type: " + Type + "\t" + "Quantity: " + Quantity; 
