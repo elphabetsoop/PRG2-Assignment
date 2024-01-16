@@ -10,7 +10,7 @@ namespace S10241870K_PRG2Assignment //val
     {
         public bool Dipped { get; set; }
         public Cone() { }
-        public Cone(string option, int scoops, List<Flavour> flavours, List<Topping> toppings, bool dipped):base(option, scoops, flavours, toppings)
+        public Cone(int scoops, List<Flavour> flavours, List<Topping> toppings, bool dipped):base("Cone", scoops, flavours, toppings)
         {
             Dipped = dipped;
         }
@@ -42,6 +42,9 @@ namespace S10241870K_PRG2Assignment //val
         }
         public override string ToString()
         {
+            if (Dipped)
+                return $"Dipped " + base.ToString();
+            
             return base.ToString();
         }
     }
