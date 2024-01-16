@@ -13,7 +13,7 @@ namespace S10241870K_PRG2Assignment //syn
         {
             
         }
-        public Cup(string opn, int scoops, List<Flavour> fL, List<Topping> tL):base(opn, scoops, fL, tL)
+        public Cup(int scoops, List<Flavour> fL, List<Topping> tL):base("Cup", scoops, fL, tL)
         {
             
         }

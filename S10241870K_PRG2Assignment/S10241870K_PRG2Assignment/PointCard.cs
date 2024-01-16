@@ -22,6 +22,19 @@ namespace S10241870K_PRG2Assignment //syn
         {
             Points = points;
             PunchCard = pc;
+
+            if (Points >= 10)
+            {
+                Tier = "Gold";
+            }
+            else if (Points >= 50)
+            {
+                Tier = "Silver";
+            }
+            else // Points < 50
+            {
+                Tier = "Ordinary";
+            }
         }
 
         //meth

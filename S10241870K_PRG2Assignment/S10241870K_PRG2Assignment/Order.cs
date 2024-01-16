@@ -12,7 +12,7 @@ namespace S10241870K_PRG2Assignment //syn
         public int Id { get; set; }
         public DateTime TimeReceived { get; set; }
         public DateTime? TimeFufilled { get; set; }
-        public List<IceCream> IceCreamList { get; set; }
+        public List<IceCream> IceCreamList { get; set; } = new List<IceCream>();
         
 
         //ctor
@@ -56,7 +56,7 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Id: {Id} \t Time Fufilled: {TimeFufilled}";
+            return $"Id: {Id} \t Time Received: {TimeReceived}";
         }
     }
 }

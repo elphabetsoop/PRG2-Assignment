@@ -12,7 +12,7 @@ namespace S10241870K_PRG2Assignment //syn
         public int MemberId { get; set; }
         public DateTime Dob { get; set; }
         public Order CurrentOrder { get; set; } //attribute Order.cs
-        public List<Order> OrderHistory { get; set; } //attribute Order.cs
+        public List<Order> OrderHistory { get; set; } = new List<Order>(); //attribute Order.cs
 
         public PointCard Rewards { get; set; } //attribute PointCard
 
@@ -28,6 +28,16 @@ namespace S10241870K_PRG2Assignment //syn
             Name = n;
             MemberId = mID;
             Dob = dob;
+        }
+
+        public Order MakeOrder()
+        {
+            //logic
+
+            // ### START code to prevent ide complaining
+            //remove dur actl implementation         
+            return new Order();
+            // ### END code to prevent ide complaining
         }
 
 

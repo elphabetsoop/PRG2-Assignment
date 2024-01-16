@@ -31,9 +31,33 @@ namespace S10241870K_PRG2Assignment //val
 
         //methods 
         public abstract double CalculatePrice(); 
+
         public override string ToString()
         {
-            return "Option: " + Option + "\t" + "Scoop(s): " + Scoops + "\t" + "Flavour(s): " + Flavours + "\t" + "Topping(s): " + Toppings; 
+            //return "Option: " + Option + "\t" + "Scoop(s): " + Scoops + "\t" + "Flavour(s): " + Flavours + "\t" + "Topping(s): " + Toppings; 
+            string flavours = "";
+            foreach (Flavour f in Flavours)
+            {
+                flavours += f.Type + ",";
+            }
+
+            string toppings = "";
+            foreach (Topping t in Toppings)
+            {
+                toppings += t.Type + ",";
+            }
+
+            //remove last comma
+            flavours = flavours.Remove(flavours.Length - 1);
+
+
+            if (toppings.Length == 0) //no toppings
+                return $"{Scoops} Scoop {Option} with {flavours} ice cream";
+
+            toppings = toppings.Remove(toppings.Length - 1);
+            return $"{Scoops} Scoop {Option} with {flavours} ice cream, and {toppings} topping";
+
+            
         }
     }
 }
