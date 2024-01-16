@@ -42,6 +42,9 @@ namespace S10241870K_PRG2Assignment //val
         }
         public override string ToString()
         {
+            if (Dipped)
+                return $"Dipped " + base.ToString();
+            
             return base.ToString();
         }
     }

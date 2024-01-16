@@ -42,7 +42,7 @@ namespace S10241870K_PRG2Assignment //val
         }
         public override string ToString()
         {
-            return base.ToString(); 
+            return $"{WaffleFlavour} " + base.ToString(); 
         }
     }
 }
