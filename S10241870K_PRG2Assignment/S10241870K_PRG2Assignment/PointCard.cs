@@ -23,7 +23,7 @@ namespace S10241870K_PRG2Assignment //syn
             Points = points;
             PunchCard = pc;
 
-            if (Points >= 10)
+            if (Points >= 100)
             {
                 Tier = "Gold";
             }
