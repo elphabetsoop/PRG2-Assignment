@@ -15,7 +15,7 @@ namespace S10241870K_PRG2Assignment
             //init empty customer & order list
             List<Customer> customerList = new List<Customer>();
 
-            /*// ### TESTING CUSTOMER LIST FOR OPN 2
+            // ### TESTING CUSTOMER LIST FOR OPN 2
             Customer amelia = new Customer("Amelia", 685582, new DateTime(2000, 03, 12));
             Customer bob = new Customer("Bob", 245718, new DateTime(1966, 11, 01));
             amelia.Rewards = new PointCard(150, 8);
@@ -25,7 +25,7 @@ namespace S10241870K_PRG2Assignment
             Console.WriteLine(bob.Rewards.Tier);
 
             customerList.Add(amelia); //gold
-            customerList.Add(bob); //regular*/
+            customerList.Add(bob); //regular
 
 
             List<Order> orderList = new List<Order>();
