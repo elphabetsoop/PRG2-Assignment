@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using S10241870K_PRG2Assignment;
+using System.Linq;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace S10241870K_PRG2Assignment
@@ -7,6 +8,12 @@ namespace S10241870K_PRG2Assignment
     {
         static void Main(string[] args)
         {
+            Order o1 = new Order(1, DateTime.Now);
+            Order o2 = new Order(1, DateTime.Now);
+
+            Console.WriteLine(o1 == o2);
+
+
             //HEAD
             //init empty customer & order list
             List<Customer> customerList = new List<Customer>();
@@ -252,8 +259,42 @@ namespace S10241870K_PRG2Assignment
                         }
                         Order order = new Order(oID, timeReceived);
 
+                        Order existingOrder = orderList.Find(o => o.Id == oID);
+                        {
+                            if (existingOrder != null) ////order exists in orderList (ie existing order w same ID exists)
+                            {
+                                existingOrder.AddIceCream(iceCream);
+                            }
+                            else //no existing order in orderList, add order to list & queue
+                            {
+                                order.AddIceCream(iceCream);
+                                orderList.Add(order);
 
-                        if (!orderList.Contains(order))
+                                //add to gold queue
+                                foreach (Customer gc in goldCustomers)
+                                {
+                                    if (gc.MemberId == memberId)
+                                    {
+                                        goldOrder.Enqueue(order);
+                                    }
+                                }
+
+                                //add to regular queue
+                                if (!goldOrder.Contains(order))
+                                {
+                                    regularOrder.Enqueue(order);
+                                }
+
+                                //add order to OrderHistory list
+                                foreach (Customer c in customerList)
+                                {
+                                    if (c.MemberId == memberId)
+                                        c.OrderHistory.Add(order);
+                                }
+                            }
+                        }
+
+                        /*if (!orderList.Contains(order))
                         {
                             order.AddIceCream(iceCream);
                             orderList.Add(order);
@@ -263,29 +304,9 @@ namespace S10241870K_PRG2Assignment
                             if (iceCream != null)
                                 order.AddIceCream(iceCream); //add ice cream to IceCreamList in Order
                             break;
-                        }
+                        }*/
 
-                        //add to gold queue
-                        foreach (Customer gc in goldCustomers)
-                        {
-                            if (gc.MemberId == memberId)
-                            {
-                                goldOrder.Enqueue(order);
-                            }
-                        }
 
-                        //add to regular queue
-                        if (!goldOrder.Contains(order))
-                        {
-                            regularOrder.Enqueue(order);
-                        }
-
-                        //add order to OrderHistory list
-                        foreach (Customer c in customerList)
-                        {
-                            if (c.MemberId == memberId)
-                                c.OrderHistory.Add(order); 
-                        }
                         
                     }
                     else
@@ -303,9 +324,14 @@ namespace S10241870K_PRG2Assignment
             foreach (Order gold in goldOrder)
             {
                 Console.Write($"{gold.Id,-15} {gold.TimeReceived,-25}");
-                foreach (IceCream iC in gold.IceCreamList)
+                Console.WriteLine(gold.IceCreamList[0]);
+                
+                if (gold.IceCreamList.Count > 1)
                 {
-                    Console.WriteLine($"{iC}");
+                    for (int i = 1; i < gold.IceCreamList.Count; i++)
+                    {
+                        Console.WriteLine($"{" ",-40} {gold.IceCreamList[i]}");
+                    }
                 }
             }
 
@@ -316,9 +342,14 @@ namespace S10241870K_PRG2Assignment
             foreach (Order regular in regularOrder)
             {
                 Console.Write($"{regular.Id,-15} {regular.TimeReceived,-25}");
-                foreach (IceCream iC in regular.IceCreamList)
+                Console.WriteLine(regular.IceCreamList[0]);
+
+                if (regular.IceCreamList.Count > 1)
                 {
-                    Console.WriteLine($"{iC}");
+                    for (int i = 1; i < regular.IceCreamList.Count; i++)
+                    {
+                        Console.WriteLine($"{" ",-40} {regular.IceCreamList[i]}");
+                    }
                 }
             }
         } //2: ListCurrentOrders() 
@@ -343,6 +374,7 @@ namespace S10241870K_PRG2Assignment
                 {
                     Console.WriteLine(iC);
                 }
+                Console.WriteLine();
             }
         } //DisplayOrderDetails()
 
@@ -357,4 +389,4 @@ namespace S10241870K_PRG2Assignment
         // ### ADVANCED FEATURES ###
     }
 }
-        
+
