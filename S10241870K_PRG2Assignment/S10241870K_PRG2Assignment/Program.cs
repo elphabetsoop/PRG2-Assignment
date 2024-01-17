@@ -1,5 +1,6 @@
 ﻿using S10241870K_PRG2Assignment;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace S10241870K_PRG2Assignment
@@ -19,7 +20,8 @@ namespace S10241870K_PRG2Assignment
             List<Customer> customerList = new List<Customer>();
             List<Order> orderList = new List<Order>();
             //init valid flavours, toppings, waffle flavours
-            List<string> validFlavours = new List<string> { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
+            List<string> validFlavours = new List<string>
+                { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
             List<string> validToppings = new List<string> { "sprinkles", "mochi", "sago", "oreos" };
             List<string> validWaffle = new List<string> { "original", "red velvet", "charcoal", "pandan" };
 
@@ -34,6 +36,29 @@ namespace S10241870K_PRG2Assignment
 
             customerList.Add(amelia); //gold
             customerList.Add(bob); //regular*/
+
+            /*// ### TESTING CURRENT ORDER FOR OPN 6 ###
+            Customer amelia = new Customer("Amelia", 685582, new DateTime(2000, 03, 12));
+            Customer bob = new Customer("Bob", 245718, new DateTime(1966, 11, 01));
+            amelia.Rewards = new PointCard(150, 8);
+            bob.Rewards = new PointCard(5, 1);
+            customerList.Add(amelia); //gold
+            customerList.Add(bob); //regular
+
+            amelia.CurrentOrder = new Order(69, DateTime.Now);
+            amelia.CurrentOrder.AddIceCream(new Cone(2,
+                new List<Flavour> { new Flavour("Durian", true, 1), new Flavour("Chocolate", false, 1) },
+                new List<Topping>(), true));
+            amelia.CurrentOrder.AddIceCream(new Cup(2,
+                new List<Flavour> { new Flavour("Strawberry", false, 1), new Flavour("Chocolate", false, 1) },
+                new List<Topping> { new Topping("sprinkles") }));
+            amelia.CurrentOrder.AddIceCream(new Waffle(1, new List<Flavour> { new Flavour("Ube", true, 1) },
+                new List<Topping> { new Topping("oreos") }, "Pandan"));
+
+            bob.CurrentOrder = new Order(420, DateTime.Now);
+            bob.CurrentOrder.AddIceCream(new Cone(2, new List<Flavour> { new Flavour("Durian", true, 1), 
+                new Flavour("Chocolate", false, 1) }, new List<Topping>(), true));*/
+
 
             while (true)
             {
@@ -67,7 +92,7 @@ namespace S10241870K_PRG2Assignment
                 }
                 else if (opn == 6)
                 {
-                    //
+                    ModifyOrderDetails(customerList, validFlavours, validToppings, validWaffle);
                 }
                 else if (opn == 7) //advanced 1
                 {
@@ -81,7 +106,6 @@ namespace S10241870K_PRG2Assignment
                 {
                     Console.WriteLine("Invalid Option. Please try again.");
                 }
-
                 Console.WriteLine();
                 
             }
@@ -117,10 +141,24 @@ namespace S10241870K_PRG2Assignment
                 }
             }
             Console.WriteLine("-----------------------------");
-            Console.Write("Enter your option: ");
-            int opn = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine();
-            return opn;
+
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter your option: ");
+                    int opn = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine();
+                    return opn;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Invalid option. Please enter a number.");
+                }
+            }
+            
+            
+            
         } //DisplayMenu(): Syn Kit
 
         // ### BASIC FEATURES ###
@@ -293,21 +331,6 @@ namespace S10241870K_PRG2Assignment
                                 }
                             }
                         }
-
-                        /*if (!orderList.Contains(order))
-                        {
-                            order.AddIceCream(iceCream);
-                            orderList.Add(order);
-                        }
-                        else //order exists in orderList (ie existing order w same ID exists)
-                        {
-                            if (iceCream != null)
-                                order.AddIceCream(iceCream); //add ice cream to IceCreamList in Order
-                            break;
-                        }*/
-
-
-                        
                     }
                     else
                         break;
@@ -378,7 +401,177 @@ namespace S10241870K_PRG2Assignment
             }
         } //DisplayOrderDetails()
 
+        //opn 6 basic feature 6: Syn Kit
+        static void ModifyOrderDetails(List<Customer> customerList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
+        {
+            ListCustomer(customerList); //list customers
+            Console.Write("Select a customer: ");
+            int cNo = Convert.ToInt32(Console.ReadLine());
+            Customer c = customerList[cNo - 1];
 
+            try
+            {
+                Order currentOrder = c.CurrentOrder; //retrieve customer's current order
+
+                for (int i = 0; i < currentOrder.IceCreamList.Count; i ++)
+                {
+                    Console.WriteLine($"{i+1}. {currentOrder.IceCreamList[i]}"); //list all ice cream objs in current order
+                }
+
+                while (true)
+                {
+                    //display mod menu
+                    string[] modOpns = { "Modify ice cream", "Add new ice cream", "Remove ice cream" };
+                    Console.WriteLine();
+                    for (int i = 0; i < modOpns.Length; i++)
+                    {
+                        Console.WriteLine($"[{i + 1}] {modOpns[i]}");
+                    }
+
+                    Console.Write("Select an option: ");
+                    int modOpn = Convert.ToInt32(Console.ReadLine());
+
+                    if (modOpn == 1) // choose an existing ice cream object to modify
+                    {
+                        Console.Write("Choose an existing ice cream to modify: ");
+                        int iCNo = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine();
+
+                        currentOrder.ModifyIceCream(iCNo -1);
+                        break;
+                    }
+                    else if (modOpn == 2)
+                    {
+                        IceCream newIceCream = null;
+
+                        //add an entirely new ice cream object to the order
+                        Console.Write("Select type: (Cup/Cone/Waffle): ");
+                        string opn = Console.ReadLine();
+
+                        Console.Write("Scoops: ");
+                        int scoops = Convert.ToInt32(Console.ReadLine());
+
+                        Console.Write("Flavours (separated by comma): ");
+                        string[] fL = Console.ReadLine().Split(",");
+
+                        
+                        List<Flavour> flavours = new List<Flavour>();
+
+                        foreach (string f in fL)
+                        {
+                            bool isPremium;
+                            if (f != null && (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
+                            {
+                                if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
+                                    isPremium = true;
+                                else
+                                    isPremium = false;
+                                flavours.Add(new Flavour(f, isPremium, 1));
+                            }
+                        }
+
+                        Console.Write("Toppings (separated by comma): ");
+                        string[] tL = Console.ReadLine().Split(",");
+                        List<Topping> toppings = new List<Topping>();
+
+                        foreach (string t in tL)
+                        {
+                            if (t != null && (validToppings.IndexOf(t.ToLower()) != -1))
+                            {
+                                toppings.Add(new Topping(t));
+                            }
+                        }
+
+                        if (opn.ToLower() == "cone")
+                        {
+                            bool isDipped;
+
+                            while (true)
+                            {
+                                Console.Write("Dipped cone (y/n): ");
+                                string dipped = Console.ReadLine();
+
+                                if (dipped.ToLower() == "y")
+                                {
+                                    isDipped = true;
+                                    break;
+                                }
+                                else if (dipped.ToLower() == "n")
+                                {
+                                    isDipped = false;
+                                    break;
+                                }
+                                else
+                                    Console.WriteLine("Please enter 'y' or 'n'");
+                            }
+                            //init cone
+                            newIceCream = new Cone(scoops, flavours, toppings, isDipped);
+                        }
+                        else if (opn.ToLower() == "waffle")
+                        {
+                            while (true)
+                            {
+                                Console.Write("Waffle flavour: ");
+                                string waffleFlavour = Console.ReadLine();
+
+                                if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
+                                {
+                                    //init waffle
+                                    newIceCream = new Waffle(scoops, flavours, toppings, waffleFlavour);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid waffle flavour.");
+                                }
+                            }
+                        }
+                        else if (opn.ToLower() == "cup")
+                        {
+                            //init cup
+                            newIceCream = new Cup(scoops, flavours, toppings);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid option. Please try again.");
+                        }
+
+                        currentOrder.AddIceCream(newIceCream);
+                        break;
+                    }
+                    else if (modOpn == 3) //choose an existing ice cream object to delete from the order
+                    {
+                        if (currentOrder.IceCreamList.Count > 1)
+                        {
+                            Console.Write("Choose an ice cream to remove from order: ");
+                            int iCNo = Convert.ToInt32(Console.ReadLine());
+
+                            currentOrder.DeleteIceCream(iCNo - 1);
+                        }
+                        else
+                        {
+                            Console.WriteLine("You cannot have 0 ice creams in an order.");
+                        }
+                        
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option. Please try again.");
+                    }
+                }
+
+                Console.WriteLine("\nUpdated order: ");
+                for (int i = 0; i < currentOrder.IceCreamList.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {currentOrder.IceCreamList[i]}"); //list all ice cream objs in updated order
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine($"Customer {cNo} does not currently have an order.");
+            }
+        } //ModifyOrderDetails()
 
 
 
