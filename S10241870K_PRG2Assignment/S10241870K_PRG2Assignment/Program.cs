@@ -7,13 +7,14 @@ namespace S10241870K_PRG2Assignment
     {
         static void Main(string[] args)
         {
-            //init valid flavours, toppings, waffle flavours
-            List<string> validFlavours = new List<string>{ "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
-            List<string> validToppings = new List<string>{ "sprinkles", "mochi", "sago", "oreos" };
-            List<string> validWaffle = new List<string> { "original", "red velvet", "charcoal", "pandan" };
-            
+            //HEAD
             //init empty customer & order list
             List<Customer> customerList = new List<Customer>();
+            List<Order> orderList = new List<Order>();
+            //init valid flavours, toppings, waffle flavours
+            List<string> validFlavours = new List<string> { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
+            List<string> validToppings = new List<string> { "sprinkles", "mochi", "sago", "oreos" };
+            List<string> validWaffle = new List<string> { "original", "red velvet", "charcoal", "pandan" };
 
             // ### TESTING CUSTOMER LIST FOR OPN 2
             Customer amelia = new Customer("Amelia", 685582, new DateTime(2000, 03, 12));
@@ -27,9 +28,6 @@ namespace S10241870K_PRG2Assignment
             customerList.Add(amelia); //gold
             customerList.Add(bob); //regular
 
-
-            List<Order> orderList = new List<Order>();
-
             while (true)
             {
                 int opn = DisplayMenu();
@@ -39,7 +37,7 @@ namespace S10241870K_PRG2Assignment
                 }
                 else if (opn == 1)
                 {
-                    //
+                    ListCustomer(customerList);
                 }
                 else if (opn == 2)
                 {
@@ -52,9 +50,10 @@ namespace S10241870K_PRG2Assignment
                 Console.WriteLine();
 
             }
-        }
+        } //end of main 
 
         // ### INITIALISATION ###
+
         static int DisplayMenu()
         {
             List<string> menuList = new List<string> {
@@ -89,11 +88,35 @@ namespace S10241870K_PRG2Assignment
             return opn;
         } //DisplayMenu(): Syn Kit
 
-
         // ### BASIC FEATURES ###
+        //opn 1 basic feature 1: Valery 
+        static void ListCustomer(List<Customer> customerList)
+        {
+            using (StreamReader sr = new StreamReader("customers.csv"))
+            {
+                string? s = sr.ReadLine(); // read the heading
+                                           // display the heading
+                if (s != null)
+                {
+                    string[] heading = s.Split(',');
+                }
+                while ((s = sr.ReadLine()) != null)     // repeat until end of file
+                {
+                    string[] customers = s.Split(',');
+                    DateTime date = DateTime.Parse(customers[2]);
 
-        //opn 2: Syn Kit
-        static (Queue<Order>, Queue<Order>) InitOrders(List<Customer> customerList, List<Order> orderList, List<string>validFlavours, List<string> validToppings, List<string> validWaffle)
+                    Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
+                    customerList.Add(customer);
+                    PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
+                    pointCard.Tier = customers[3];
+                    Console.WriteLine($"{customer.ToString()}{pointCard.ToString()}");
+                }
+            }
+        } //ListCustomer 
+
+
+        //opn 2 basic feature 2: Syn Kit
+        static (Queue<Order>, Queue<Order>) InitOrders(List<Customer> customerList, List<Order> orderList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
             string orderFile = "orders.csv";
             List<Customer> goldCustomers = new List<Customer>();
@@ -116,7 +139,7 @@ namespace S10241870K_PRG2Assignment
                 }
             }
 
-            foreach (Customer g in goldCustomers) 
+            foreach (Customer g in goldCustomers)
             {
                 Console.WriteLine(g);
             }
@@ -124,8 +147,6 @@ namespace S10241870K_PRG2Assignment
             {
                 Console.WriteLine(r);
             }
-
-            
 
 
             //read orderfile & create orders, add to respective queue
@@ -179,30 +200,30 @@ namespace S10241870K_PRG2Assignment
                         switch (iceCreamOpn.ToLower())
                         {
                             case "cup":
-                            {
-                                iceCream = new Cup(scoops, flavourList, toppingList);
-                                break;
+                                {
+                                    iceCream = new Cup(scoops, flavourList, toppingList);
+                                    break;
                                 }
                             case "cone":
-                            {
-                                bool isDipped = Convert.ToBoolean(orderInfo[6]);
-                                iceCream = new Cone(scoops, flavourList, toppingList, isDipped);
-                                break;
-                            }
+                                {
+                                    bool isDipped = Convert.ToBoolean(orderInfo[6]);
+                                    iceCream = new Cone(scoops, flavourList, toppingList, isDipped);
+                                    break;
+                                }
                             case "waffle":
-                            {
-                                string waffleFlavour = orderInfo[7];
-                                if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
                                 {
-                                    iceCream = new Waffle(scoops, flavourList, toppingList, waffleFlavour);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid waffle flavour.");
-                                }
+                                    string waffleFlavour = orderInfo[7];
+                                    if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
+                                    {
+                                        iceCream = new Waffle(scoops, flavourList, toppingList, waffleFlavour);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid waffle flavour.");
+                                    }
 
-                                break;
-                            }
+                                    break;
+                                }
                         }
                         Order order = new Order(oID, timeReceived);
 
@@ -235,19 +256,19 @@ namespace S10241870K_PRG2Assignment
                     }
                     else
                         break;
-                } 
+                }
             }
 
             return (goldOrder, regularOrder);
-        } 
+        }
 
         static void ListCurrentOrders(Queue<Order> goldOrder, Queue<Order> regularOrder)
         {
             Console.WriteLine("GOLD QUEUE");
             Console.WriteLine($"{"Order ID",-15} {"Time received",-25}{"Ice cream(s)",-15}");
-            foreach (Order gold in goldOrder) 
+            foreach (Order gold in goldOrder)
             {
-                Console.Write($"{ gold.Id, -15} {gold.TimeReceived, -25}");
+                Console.Write($"{gold.Id,-15} {gold.TimeReceived,-25}");
                 foreach (IceCream iC in gold.IceCreamList)
                 {
                     Console.WriteLine($"{iC}");
@@ -265,9 +286,8 @@ namespace S10241870K_PRG2Assignment
                 {
                     Console.WriteLine($"{iC}");
                 }
-            }       
+            }
         } //2: ListCurrentOrders() 
-
-        // ### ADVANCED FEATURES ###
     }
 }
+        // ### ADVANCED FEATURES ###

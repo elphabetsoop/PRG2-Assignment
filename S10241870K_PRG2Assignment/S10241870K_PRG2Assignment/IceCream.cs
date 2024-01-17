@@ -8,10 +8,14 @@ namespace S10241870K_PRG2Assignment //val
 {
     internal abstract class IceCream
     {
+
+        //properties 
         public string Option { get; set; }
         public int Scoops {  get; set; }
         public List<Flavour> Flavours { get; set; }
         public List<Topping> Toppings { get; set; }
+
+        //constructors 
         public IceCream()
         {
             Flavours = new List<Flavour>();
@@ -24,7 +28,9 @@ namespace S10241870K_PRG2Assignment //val
             Flavours = flavours;
             Toppings = toppings;
         }
-        public abstract double CalculatePrice();
+
+        //methods 
+        public abstract double CalculatePrice(); 
 
         public override string ToString()
         {

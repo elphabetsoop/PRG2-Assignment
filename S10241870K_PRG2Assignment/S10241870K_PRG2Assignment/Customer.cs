@@ -40,6 +40,7 @@ namespace S10241870K_PRG2Assignment //syn
             // ### END code to prevent ide complaining
         }
 
+
         public bool IsBirthday()
         {
             if (DateTime.Today == Dob)
@@ -54,7 +55,7 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob}s";
+            return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob.ToString("dd/MM/yyyy")}\t";
         }
     }
 }
