@@ -57,8 +57,7 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            //return $"Points: {Points} \t Punchcard: {PunchCard} \t Tier: {Tier}";
-            return $"{Points} \t {PunchCard} \t {Tier}";
+            return $"Points: {Points} \t Punchcard: {PunchCard} \t Tier: {Tier}";
         }
     }
 }

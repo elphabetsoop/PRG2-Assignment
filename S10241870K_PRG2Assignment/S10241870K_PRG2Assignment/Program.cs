@@ -46,9 +46,37 @@ namespace S10241870K_PRG2Assignment
                     Queue<Order> regularOrder = orders.Item2;
                     ListCurrentOrders(goldOrder, regularOrder);
                 }
+                else if (opn == 3)
+                {
+                    //
+                }
+                else if (opn == 4)
+                {
+                    //
+                }
+                else if (opn == 5)
+                {
+                    DisplayOrderDetails(customerList);
+                }
+                else if (opn == 6)
+                {
+                    //
+                }
+                else if (opn == 7) //advanced 1
+                {
+                    //
+                }
+                else if (opn == 8) //advanced 2
+                {
+                    //
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Option. Please try again.");
+                }
 
                 Console.WriteLine();
-
+                
             }
         } //end of main 
 
@@ -224,7 +252,7 @@ namespace S10241870K_PRG2Assignment
                         }
                         Order order = new Order(oID, timeReceived);
 
-                        //create order, add to queue
+
                         if (!orderList.Contains(order))
                         {
                             order.AddIceCream(iceCream);
@@ -232,7 +260,8 @@ namespace S10241870K_PRG2Assignment
                         }
                         else //order exists in orderList (ie existing order w same ID exists)
                         {
-                            if (iceCream != null) order.AddIceCream(iceCream); //add ice cream to IceCreamList in Order
+                            if (iceCream != null)
+                                order.AddIceCream(iceCream); //add ice cream to IceCreamList in Order
                             break;
                         }
 
@@ -250,6 +279,14 @@ namespace S10241870K_PRG2Assignment
                         {
                             regularOrder.Enqueue(order);
                         }
+
+                        //add order to OrderHistory list
+                        foreach (Customer c in customerList)
+                        {
+                            if (c.MemberId == memberId)
+                                c.OrderHistory.Add(order); 
+                        }
+                        
                     }
                     else
                         break;
@@ -291,7 +328,23 @@ namespace S10241870K_PRG2Assignment
         {
             ListCustomer(customerList); //list customers
             Console.Write("Select a customer: ");
-        }
+            int cNo = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine();
+            Console.WriteLine($"Order History of Customer {cNo}");
+            Customer c = customerList[cNo - 1];
+            Console.WriteLine(c);
+            Console.WriteLine();
+
+            foreach (Order o in c.OrderHistory)
+            {
+                Console.WriteLine(o);
+                foreach (IceCream iC in o.IceCreamList)
+                {
+                    Console.WriteLine(iC);
+                }
+            }
+        } //DisplayOrderDetails()
 
 
 

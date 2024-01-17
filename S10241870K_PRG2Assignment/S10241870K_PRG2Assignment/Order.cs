@@ -56,7 +56,10 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Id: {Id} \t Time Received: {TimeReceived}";
+            if (TimeFufilled != null)
+                return $"Id: {Id} \t Time Received: {TimeReceived} \t Time Fufilled: {TimeFufilled} \t";
+            
+            return $"Id: {Id} \t Time Received: {TimeReceived} \t";
         }
     }
 }
