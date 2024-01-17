@@ -23,7 +23,7 @@ namespace S10241870K_PRG2Assignment //syn
             Points = points;
             PunchCard = pc;
 
-            if (Points >= 10)
+            if (Points >= 100)
             {
                 Tier = "Gold";
             }
@@ -57,7 +57,8 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Points: {Points} \t Punchcard: {PunchCard} \t Tier: {Tier}";
+            //return $"Points: {Points} \t Punchcard: {PunchCard} \t Tier: {Tier}";
+            return $"{Points} \t {PunchCard} \t {Tier}";
         }
     }
 }

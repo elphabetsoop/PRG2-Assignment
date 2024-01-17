@@ -55,7 +55,8 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob.ToString("dd/MM/yyyy")}\t";
+            //return $"Name: {Name} \t Member ID: {MemberId} \t DOB: {Dob.ToString("dd/MM/yyyy")}\t";
+            return $"{Name} \t {MemberId} \t {Dob.ToString("dd/MM/yyyy")} \t";
         }
     }
 }

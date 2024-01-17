@@ -16,7 +16,7 @@ namespace S10241870K_PRG2Assignment
             List<string> validToppings = new List<string> { "sprinkles", "mochi", "sago", "oreos" };
             List<string> validWaffle = new List<string> { "original", "red velvet", "charcoal", "pandan" };
 
-            // ### TESTING CUSTOMER LIST FOR OPN 2
+            /*// ### TESTING CUSTOMER LIST FOR OPN 2
             Customer amelia = new Customer("Amelia", 685582, new DateTime(2000, 03, 12));
             Customer bob = new Customer("Bob", 245718, new DateTime(1966, 11, 01));
             amelia.Rewards = new PointCard(150, 8);
@@ -26,7 +26,7 @@ namespace S10241870K_PRG2Assignment
             Console.WriteLine(bob.Rewards.Tier);
 
             customerList.Add(amelia); //gold
-            customerList.Add(bob); //regular
+            customerList.Add(bob); //regular*/
 
             while (true)
             {
@@ -94,12 +94,15 @@ namespace S10241870K_PRG2Assignment
         {
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
+                int i = 1;
                 string? s = sr.ReadLine(); // read the heading
                                            // display the heading
                 if (s != null)
                 {
                     string[] heading = s.Split(',');
                 }
+
+                Console.WriteLine($"{"No.",-5}{"Name",-20}{"Member ID",-15}{"DOB",-15}{"Points",-10}{"PunchCard",-10}{"Tier"}");
                 while ((s = sr.ReadLine()) != null)     // repeat until end of file
                 {
                     string[] customers = s.Split(',');
@@ -108,8 +111,11 @@ namespace S10241870K_PRG2Assignment
                     Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
                     customerList.Add(customer);
                     PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
-                    pointCard.Tier = customers[3];
-                    Console.WriteLine($"{customer.ToString()}{pointCard.ToString()}");
+                    //pointCard.Tier = customers[3];
+                    customer.Rewards = pointCard; //syn: set attribute pointcard, else pointcard not associated (null)
+                    //Console.WriteLine($"{i} \t {customer.ToString()}{pointCard.ToString()}");
+                    Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-10}{pointCard.Tier}");
+                    i++; //syn: added counter to display customer number (for opn 5)
                 }
             }
         } //ListCustomer 
@@ -120,7 +126,7 @@ namespace S10241870K_PRG2Assignment
         {
             string orderFile = "orders.csv";
             List<Customer> goldCustomers = new List<Customer>();
-            List<Customer> regularCustomer = new List<Customer>();
+            List<Customer> regularCustomers = new List<Customer>();
 
             Queue<Order> goldOrder = new Queue<Order>();
             Queue<Order> regularOrder = new Queue<Order>();
@@ -128,6 +134,7 @@ namespace S10241870K_PRG2Assignment
             //iterate through customerList, filter gold & regular members
             foreach (Customer c in customerList)
             {
+                //Console.WriteLine(c);
                 string tier = c.Rewards.Tier; //membership tier: ordinary, silver or gold
                 if (tier.ToLower() == "gold")
                 {
@@ -135,19 +142,9 @@ namespace S10241870K_PRG2Assignment
                 }
                 else
                 {
-                    regularCustomer.Add(c);
+                    regularCustomers.Add(c);
                 }
             }
-
-            foreach (Customer g in goldCustomers)
-            {
-                Console.WriteLine(g);
-            }
-            foreach (Customer r in regularCustomer)
-            {
-                Console.WriteLine(r);
-            }
-
 
             //read orderfile & create orders, add to respective queue
             using (StreamReader sr = new StreamReader(orderFile))
@@ -259,7 +256,7 @@ namespace S10241870K_PRG2Assignment
                 }
             }
 
-            return (goldOrder, regularOrder);
+            return (goldOrder, regularOrder); //returns tuple: 2 queues
         }
 
         static void ListCurrentOrders(Queue<Order> goldOrder, Queue<Order> regularOrder)
@@ -288,6 +285,23 @@ namespace S10241870K_PRG2Assignment
                 }
             }
         } //2: ListCurrentOrders() 
+
+        //opn 5 basic feature 5: Syn Kit
+        static void DisplayOrderDetails(List<Customer> customerList)
+        {
+            ListCustomer(customerList); //list customers
+            Console.Write("Select a customer: ");
+        }
+
+
+
+
+
+
+
+
+
+        // ### ADVANCED FEATURES ###
     }
 }
-        // ### ADVANCED FEATURES ###
+        
