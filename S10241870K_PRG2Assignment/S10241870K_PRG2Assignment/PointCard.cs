@@ -50,8 +50,7 @@ namespace S10241870K_PRG2Assignment //syn
         { 
             if (PunchCard == 10)
             {
-                //### 11th ice cream free logic
-                PunchCard = 0;
+                PunchCard = 0; //reset back to 0; method is called to check if this is 11th ice cream
             }
         }
 

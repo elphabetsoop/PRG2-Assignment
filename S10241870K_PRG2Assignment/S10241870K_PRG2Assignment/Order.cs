@@ -11,7 +11,7 @@ namespace S10241870K_PRG2Assignment //syn
     {
         public int Id { get; set; }
         public DateTime TimeReceived { get; set; }
-        public DateTime? TimeFufilled { get; set; }
+        public DateTime? TimeFulfilled { get; set; }
         public List<IceCream> IceCreamList { get; set; } = new List<IceCream>();
         
 
@@ -153,8 +153,8 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            if (TimeFufilled != null)
-                return $"Id: {Id} \t Time Received: {TimeReceived} \t Time Fufilled: {TimeFufilled} \t";
+            if (TimeFulfilled != null)
+                return $"Id: {Id} \t Time Received: {TimeReceived} \t Time Fulfilled: {TimeFulfilled} \t";
             
             return $"Id: {Id} \t Time Received: {TimeReceived} \t";
         }

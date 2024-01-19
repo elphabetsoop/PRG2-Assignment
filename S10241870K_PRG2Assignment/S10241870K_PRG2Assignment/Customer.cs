@@ -43,14 +43,16 @@ namespace S10241870K_PRG2Assignment //syn
 
         public bool IsBirthday()
         {
-            if (DateTime.Today == Dob)
-            {
+            int today = DateTime.Today.Day;
+            int dobDate = Dob.Day;
+
+            int todayMonth = DateTime.Today.Month;
+            int dobMonth = Dob.Month;
+            if (today == dobDate && todayMonth == dobMonth)
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+                
+            return false;
+
         }
 
         public override string ToString()
