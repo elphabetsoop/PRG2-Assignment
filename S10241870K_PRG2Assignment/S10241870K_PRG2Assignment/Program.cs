@@ -223,7 +223,7 @@ namespace S10241870K_PRG2Assignment
                 }
             }
 
-            //read orderfile & create orders, add to respective queue
+            //read orderfile & create orders, add to respective queue if time fulfilled is null
             using (StreamReader sr = new StreamReader(orderFile))
             {
                 string header = sr.ReadLine(); // Id,MemberId,TimeReceived,TimeFulfilled,Option,Scoops,Dipped,WaffleFlavour,F1,F2,F3,T1,T2,T3,T4
@@ -237,17 +237,17 @@ namespace S10241870K_PRG2Assignment
                         int oID = int.Parse(orderInfo[0]);
                         int memberId = Convert.ToInt32(orderInfo[1]);
                         DateTime timeReceived = Convert.ToDateTime(orderInfo[2]);
-                        DateTime timeFufilled = Convert.ToDateTime(orderInfo[3]);
+                        
                         string iceCreamOpn = orderInfo[4];
                         int scoops = Convert.ToInt32(orderInfo[5]);
 
                         //init flavourList
-                        List<Flavour> flavourList = new List<Flavour> { };
+                        List<Flavour> flavourList = new List<Flavour>();
                         bool isPremium;
                         for (int i = 8; i <= 10; i++) //flavours 1-3
                         {
                             string f = orderInfo[i];
-                            if (f != null && (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
+                            if (!string.IsNullOrEmpty(f) && (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
                             {
                                 if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
                                     isPremium = true;
@@ -263,7 +263,7 @@ namespace S10241870K_PRG2Assignment
                         for (int i = 11; i <= 14; i++) //toppings 1-4
                         {
                             string t = orderInfo[i];
-                            if (t != null && (validToppings.IndexOf(t.ToLower()) != -1))
+                            if (!string.IsNullOrEmpty(t) && (validToppings.IndexOf(t.ToLower()) != -1))
                             {
                                 toppingList.Add(new Topping(t));
                             }
@@ -302,16 +302,19 @@ namespace S10241870K_PRG2Assignment
                         Order order = new Order(oID, timeReceived);
 
                         Order existingOrder = orderList.Find(o => o.Id == oID);
-                        {
-                            if (existingOrder != null) ////order exists in orderList (ie existing order w same ID exists)
-                            {
-                                existingOrder.AddIceCream(iceCream);
-                            }
-                            else //no existing order in orderList, add order to list & queue
-                            {
-                                order.AddIceCream(iceCream);
-                                orderList.Add(order);
 
+                        if (existingOrder != null) ////order exists in orderList (ie existing order w same ID exists)
+                        {
+                            existingOrder.AddIceCream(iceCream);
+                        }
+                        else //no existing order in orderList, add order to list & queue
+                        {
+                            order.AddIceCream(iceCream);
+                            orderList.Add(order);
+
+                            if (string.IsNullOrEmpty(orderInfo[3])) //time fulfilled is blank, pending order
+                            {
+                                //add pending orders to queue
                                 //add to gold queue
                                 foreach (Customer gc in goldCustomers)
                                 {
@@ -326,8 +329,13 @@ namespace S10241870K_PRG2Assignment
                                 {
                                     regularOrder.Enqueue(order);
                                 }
+                            }
+                            else //time fulfilled not blank, 
+                            {
+                                DateTime timeFulfilled = Convert.ToDateTime(orderInfo[3]);
+                                order.TimeFulfilled = timeFulfilled;
 
-                                //add order to OrderHistory list
+                                //add order to OrderHistory list, alr fulfilled
                                 foreach (Customer c in customerList)
                                 {
                                     if (c.MemberId == memberId)
