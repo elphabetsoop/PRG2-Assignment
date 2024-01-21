@@ -1,3 +1,8 @@
+
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Xml.Schema;
 ﻿using S10241870K_PRG2Assignment;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -81,14 +86,18 @@ namespace S10241870K_PRG2Assignment
                     regularOrder = orders.Item2;
                     ListCurrentOrders(goldOrder, regularOrder);
                 }
+
+
                 else if (opn == 3)
                 {
-                    //
+                    RegisterCustomer(customerList); 
                 }
+
                 else if (opn == 4)
                 {
-                    //
+                    CreateCustomerOrder(customerList); 
                 }
+
                 else if (opn == 5)
                 {
                     DisplayOrderDetails(customerList);
@@ -109,6 +118,7 @@ namespace S10241870K_PRG2Assignment
                 {
                     Console.WriteLine("Invalid Option. Please try again.");
                 }
+
                 Console.WriteLine();
 
             }
@@ -168,6 +178,7 @@ namespace S10241870K_PRG2Assignment
         //opn 1 basic feature 1: Valery 
         static void ListCustomer(List<Customer> customerList)
         {
+            //display information of all customers 
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
                 int i = 1;
@@ -178,12 +189,29 @@ namespace S10241870K_PRG2Assignment
                     string[] heading = s.Split(',');
                 }
 
-                Console.WriteLine($"{"No.",-5}{"Name",-20}{"Member ID",-15}{"DOB",-15}{"Points",-10}{"PunchCard",-10}{"Tier"}");
+                Console.WriteLine($"{"No.",-5}{"Name",-20}{"Member ID",-15}{"DOB",-15}{"Points",-10}{"PunchCard",-13}{"Tier"}");
                 while ((s = sr.ReadLine()) != null)     // repeat until end of file
                 {
                     string[] customers = s.Split(',');
-                    DateTime date = DateTime.Parse(customers[2]);
+                    DateTime date;
 
+                    if (DateTime.TryParse(customers[2], out date))
+                    {
+                        if (!DateTime.TryParse(customers[2], out date))
+                        {
+                            Console.WriteLine("Error in parsing DateTime from string."); 
+                        }
+
+                        Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
+                        customerList.Add(customer);
+                        PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
+                        //pointCard.Tier = customers[3];
+                        customer.Rewards = pointCard; //syn: set attribute pointcard, else pointcard not associated (null)
+                        Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-13}{pointCard.Tier}");
+                        i++; //syn: added counter to display customer number (for opn 5)
+                    }  
+
+<<<<<<< HEAD
                     Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
                     
                     PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
@@ -193,6 +221,8 @@ namespace S10241870K_PRG2Assignment
                     //Console.WriteLine($"{i} \t {customer.ToString()}{pointCard.ToString()}");
                     Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-10}{pointCard.Tier}");
                     i++; //syn: added counter to display customer number (for opn 5)
+=======
+>>>>>>> 834dc2f86b8414cf0387cf900ecf7d487853b333
                 }
             }
         } //ListCustomer 
@@ -388,6 +418,101 @@ namespace S10241870K_PRG2Assignment
                 }
             }
         } //2: ListCurrentOrders() 
+
+        //opn 3 basic feature 3: Valery 
+        static void RegisterCustomer(List<Customer> customerList)
+        {
+            // prompt user for information 
+            Console.WriteLine("Please provide the following: ");
+            Console.Write("Name: ");
+            string? name = Console.ReadLine();
+            Console.Write("ID Number: "); 
+            int id = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Date Of Birth: ");
+            DateTime customerDob;
+            if (!DateTime.TryParse(Console.ReadLine(), out customerDob))
+            {
+                Console.WriteLine("Given date format is invalid. Please try again.");
+                return; //to stop the program from further execution 
+            }
+
+            //create customer object with the information 
+            Customer newCustomer = new Customer(name, id, customerDob);
+            customerList.Add(newCustomer);
+
+            //create a Pointcard object 
+            int points = 0;
+            double totalPrice = 0;
+            int punchCard = 0;
+
+            if (newCustomer.CurrentOrder != null && newCustomer.CurrentOrder.IceCreamList != null)
+            {
+                punchCard = newCustomer.CurrentOrder.IceCreamList.Count;
+
+                foreach (IceCream iceCream in newCustomer.CurrentOrder.IceCreamList)
+                {
+                    double price = iceCream.CalculatePrice();
+                    totalPrice += price;
+                }
+
+                points = (int)Math.Floor(totalPrice * 0.72);
+            }
+
+            PointCard newPointcard = new PointCard(points, punchCard);
+
+            //assign Pointcard object to the customer 
+            newCustomer.Rewards = newPointcard;
+
+            //append customer information to customers file 
+            string customerDetails = newCustomer.Name + "," + newCustomer.MemberId + "," + newCustomer.Dob.ToString("dd/MM/yyyy") + "," + newPointcard.Points + "," + newPointcard.PunchCard + "," + newPointcard.Tier; 
+            using (StreamWriter sw = new StreamWriter("customers.csv", true))
+            {
+                sw.WriteLine(customerDetails);
+                Console.WriteLine($"Registration of new customer, {name}, successful.");
+            }
+        } //RegisterCustomer 
+
+        //opn 4 basic feature 4: Valery 
+        static void CreateCustomerOrder(List<Customer> customerList)
+        {
+            //List customers from customers csv 
+            using (StreamReader sr = new StreamReader("customers.csv"))
+            {
+                string? s = sr.ReadLine(); // read the heading
+                                           // display the heading
+                if (s != null)
+                {
+                    string[] heading = s.Split(',');
+                }
+                while ((s = sr.ReadLine()) != null)     // repeat until end of file
+                {
+                    string[] customers = s.Split(',');
+                    DateTime date = DateTime.Parse(customers[2]);
+
+                    Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
+                    customerList.Add(customer);
+                    PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
+                    pointCard.Tier = customers[3];
+                    Console.WriteLine($"{customer.ToString()}{pointCard.ToString()}");
+                }
+            }
+
+            //Prompt user to select a customer 
+            Console.Write("Name of customer: ");
+            string? name = Console.ReadLine();
+
+            foreach (Customer customer in customerList)
+            {
+                if (customer.Name.ToLower() == name.ToLower())
+                {
+                    //Create an Order object 
+                    DateTime currentDate = DateTime.Now;
+                    Order order = new Order(0, currentDate);  //id is not properly done, queue number from the queue created in option 2?? 
+                }
+            }
+            
+
+        } //CreateCustomerOrder 
 
         //opn 5 basic feature 5: Syn Kit
         static void DisplayOrderDetails(List<Customer> customerList)
@@ -592,6 +717,7 @@ namespace S10241870K_PRG2Assignment
 
 
         // ### ADVANCED FEATURES ###
+<<<<<<< HEAD
         //opn 7 advanced feature a): Syn Kit
         static void ProcessOrderAndCheckout(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer> customerList)
         {
@@ -724,6 +850,8 @@ namespace S10241870K_PRG2Assignment
                 customer.OrderHistory.Add(checkout); //add to customer order history
             }
         }
+=======
+>>>>>>> 834dc2f86b8414cf0387cf900ecf7d487853b333
 
     }
 }
