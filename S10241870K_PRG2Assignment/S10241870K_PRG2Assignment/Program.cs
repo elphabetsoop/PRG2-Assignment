@@ -1,5 +1,10 @@
+//==========================================================
+// Student Number : S10257905F
+// Student Name : Tan Syn Kit
+// Partner Name : Tan Yi Jing Valery
+//==========================================================
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Xml.Schema;
@@ -211,7 +216,6 @@ namespace S10241870K_PRG2Assignment
                         i++; //syn: added counter to display customer number (for opn 5)
                     }  
 
-<<<<<<< HEAD
                     Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
                     
                     PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
@@ -221,8 +225,6 @@ namespace S10241870K_PRG2Assignment
                     //Console.WriteLine($"{i} \t {customer.ToString()}{pointCard.ToString()}");
                     Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-10}{pointCard.Tier}");
                     i++; //syn: added counter to display customer number (for opn 5)
-=======
->>>>>>> 834dc2f86b8414cf0387cf900ecf7d487853b333
                 }
             }
         } //ListCustomer 
