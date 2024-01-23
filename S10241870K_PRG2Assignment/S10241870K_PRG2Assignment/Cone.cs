@@ -21,7 +21,8 @@ namespace S10241870K_PRG2Assignment //val
         //methods 
         public override double CalculatePrice()
         {
-            double price; 
+            double price;
+            int premiumPrice = 0; 
 
             if (Scoops == 1)
             {
@@ -43,7 +44,15 @@ namespace S10241870K_PRG2Assignment //val
             double toppingPrice = Toppings.Count * 1.0; 
             double dippedPrice = Dipped ? 2.00:0.0; //if Dipped is true, give a value of 2, else 0.
 
-            return price + toppingPrice + dippedPrice; 
+            foreach (Flavour f in Flavours) //iterate through flavours, if premium add $2
+            {
+                if (f.Premium == true)
+                {
+                    premiumPrice += 2;
+                }
+            }
+
+            return price + toppingPrice + dippedPrice + premiumPrice; 
         }
         public override string ToString()
         {

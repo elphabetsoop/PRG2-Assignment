@@ -44,7 +44,16 @@ namespace S10241870K_PRG2Assignment //val
 
             double toppingPrice = Toppings.Count * 1.0;
 
-            return price + toppingPrice; 
+            if (WaffleFlavour.ToLower() == "red velvet" ||
+                WaffleFlavour.ToLower() == "charcoal" ||
+                WaffleFlavour.ToLower() == "pandan")
+            {
+                return price + toppingPrice + 3.0;
+            }
+            else
+            {
+                return price + toppingPrice;
+            }
         }
         public override string ToString()
         {

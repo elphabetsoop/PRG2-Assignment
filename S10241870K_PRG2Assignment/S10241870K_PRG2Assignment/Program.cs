@@ -450,46 +450,181 @@ namespace S10241870K_PRG2Assignment
         } //RegisterCustomer 
 
         //opn 4 basic feature 4: Valery 
-        static void CreateCustomerOrder(List<Customer> customerList)
+        static void CreateCustomerOrder(List<Customer> customerList, List<string> validFlavours, List<string> validWaffle, List<string> validToppings)
         {
             //List customers from customers csv 
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
+                int i = 1;
                 string? s = sr.ReadLine(); // read the heading
                                            // display the heading
                 if (s != null)
                 {
                     string[] heading = s.Split(',');
                 }
+
+                Console.WriteLine($"{"No.",-5}{"Name",-20}{"Member ID",-15}{"DOB",-15}{"Points",-10}{"PunchCard",-13}{"Tier"}");
                 while ((s = sr.ReadLine()) != null)     // repeat until end of file
                 {
                     string[] customers = s.Split(',');
-                    DateTime date = DateTime.Parse(customers[2]);
+                    DateTime date;
 
-                    Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
-                    customerList.Add(customer);
-                    PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
-                    pointCard.Tier = customers[3];
-                    Console.WriteLine($"{customer.ToString()}{pointCard.ToString()}");
+                    if (DateTime.TryParse(customers[2], out date))
+                    {
+                        if (!DateTime.TryParse(customers[2], out date))
+                        {
+                            Console.WriteLine("Error in parsing DateTime from string.");
+                        }
+
+                        Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
+                        customerList.Add(customer);
+                        PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
+                        //pointCard.Tier = customers[3];
+                        customer.Rewards = pointCard; //syn: set attribute pointcard, else pointcard not associated (null)
+                        Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-13}{pointCard.Tier}");
+                        i++; //syn: added counter to display customer number (for opn 5)
+                    }
+
                 }
             }
 
             //Prompt user to select a customer 
-            Console.Write("Name of customer: ");
+            Console.Write("\nName of customer: ");
             string? name = Console.ReadLine();
 
             foreach (Customer customer in customerList)
             {
                 if (customer.Name.ToLower() == name.ToLower())
                 {
+                    List<Flavour> flavours = new List<Flavour>();
+                    List<Topping> toppings = new List<Topping>();
+                    IceCream cone = new Cone();
+                    IceCream waffle = new Waffle();
+                    IceCream cup = new Cup();
+                    Flavour flavour1 = new Flavour();
+                    Topping topping1 = new Topping();
+
                     //Create an Order object 
                     DateTime currentDate = DateTime.Now;
                     Order order = new Order(0, currentDate);  //id is not properly done, queue number from the queue created in option 2?? 
+                    IceCreamMenu(); //init IceCreamMenu method to showcase menu 
+
+                    //prompt user to enter their ice cream order 
+                    Console.WriteLine("\nIce cream order: ");
+                    Console.Write("Option: ");
+                    string? opt = Console.ReadLine();
+                    Console.Write("Scoop(s): ");
+                    int scoops = Convert.ToInt32(Console.ReadLine());
+                    Console.Write("Flavour(s): ");
+                    string? userFlavour = Console.ReadLine();
+
+
+                    for (int i = 0; i < 3 && i < validFlavours.Count; i++)
+                    {
+                        string flavour = validFlavours[i];
+
+                        if (flavour == userFlavour)
+                        {
+                            flavour1 = new Flavour(userFlavour, false, 1);
+                            flavours.Add(flavour1);
+                        }
+                    }
+
+                    for (int i = 3; i < 6 && i < validFlavours.Count; i++)
+                    {
+                        string flavour = validFlavours[i];
+
+                        if (flavour == userFlavour)
+                        {
+                            flavour1 = new Flavour(userFlavour, true, 1);
+                            flavours.Add(flavour1);
+                        }
+                    }
+
+                    Console.Write("Toppings: ");
+                    string? userTopping = Console.ReadLine();
+
+                    if (userTopping != null)
+                    {
+                        foreach (string topping in validToppings)
+                        {
+                            if (topping == userTopping)
+                            {
+                                topping1 = new Topping(userTopping);
+                                toppings.Add(topping1);
+                            }
+                        }
+                    }
+
+                    if (opt.ToLower() == "cone" || opt.ToLower() == "waffle" || opt.ToLower() == "cup")
+                    {
+                       
+                        if (opt.ToLower() == "cone")
+                        {
+                            Console.WriteLine("Add on chocolate-dipped cone (y/n)? "); 
+                            string? chocoDippedCone = Console.ReadLine();
+
+                            if (chocoDippedCone.ToLower() == "y")
+                            {
+                                cone = new Cone(scoops, flavours, toppings, true); 
+                            }
+
+                            else if (chocoDippedCone == "n")
+                            {
+                                cone = new Cone(scoops, flavours, toppings, false); 
+                            }
+                        }
+                        else if (opt.ToLower() == "waffle")
+                        {
+                            Console.WriteLine("Waffle flavour? "); 
+                            string? waffleOpt = Console.ReadLine();
+
+                            foreach (string waffleFlavour in validWaffle)
+                            {
+                                if (waffleOpt == waffleFlavour)
+                                {
+                                    waffle = new Waffle(scoops, flavours, toppings, waffleOpt); 
+                                }
+                            }
+                        }
+                        else if (opt.ToLower() == "cup")
+                        {
+                            cup = new Cup(scoops, flavours, toppings); 
+                        }
+                    }
                 }
             }
-            
-
         } //CreateCustomerOrder 
+
+        static void IceCreamMenu()
+        {
+            //options, scoops and add ons 
+            Console.WriteLine("\nICE CREAM MENU:");
+            Console.WriteLine($"{"Options:",-15}{"Scoops:",-17}{"Add Ons:"}"); 
+            Console.WriteLine($"{"",-15}{"Single $4",-17}{"Toppings (+$1)"}");
+            Console.WriteLine($"{"Cup",-15}{"Double $5.50"}");
+            Console.WriteLine($"{"",-15}{"Triple $6.50"}");
+            Console.WriteLine("-----------------------------------------------------------------------------");
+            Console.WriteLine($"{"",-15}{"Single $4",-17}{"Toppings (+$1)"}");
+            Console.WriteLine($"{"Cone",-15}{"Double $5.50",-17}{"Chocolate-dipped cone (+$2)"}");
+            Console.WriteLine($"{"",-15}{"Triple $6.50"}");
+            Console.WriteLine("-----------------------------------------------------------------------------");
+            Console.WriteLine($"{"",-15}{"Single $7",-17}{"Toppings (+$1)"}");
+            Console.WriteLine($"{"Waffle",-15}{"Double $8.50",-17}{"Red velvet, charcoal, or pandan waffle (+$3)"}");
+            Console.WriteLine($"{"",-15}{"Triple $9.50"}");
+            //ice cream flavours 
+            Console.WriteLine("\nIce Cream Flavours:");
+            Console.WriteLine($"{"Regular flavours:",-20}{"Premium Flavours (+$2 per scoop):"}");
+            Console.WriteLine($"{"Vanilla",-20}{"Durian"}");
+            Console.WriteLine($"{"Chocolate",-20}{"Ube"}");
+            Console.WriteLine($"{"Strawberry",-20}{"Sea salt"}");
+            //toppings 
+            Console.WriteLine("\nToppings (+$1 each):");
+            Console.WriteLine("Sprinkles");
+            Console.WriteLine("Mochi");
+            Console.WriteLine("Sago");
+            Console.WriteLine("Oreos");
+        } //IceCreamMenu
 
         //opn 5 basic feature 5: Syn Kit
         static void DisplayOrderDetails(List<Customer> customerList)
