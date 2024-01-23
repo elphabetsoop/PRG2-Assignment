@@ -1,10 +1,16 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257905F
+// Student Name : Tan Syn Kit
+// Partner Name : Tan Yi Jing Valery
+//==========================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S10241870K_PRG2Assignment //syn
+namespace S10241870K_PRG2Assignment //Syn Kit
 {
     internal class Customer
     {
@@ -43,14 +49,16 @@ namespace S10241870K_PRG2Assignment //syn
 
         public bool IsBirthday()
         {
-            if (DateTime.Today == Dob)
-            {
+            int today = DateTime.Today.Day;
+            int dobDate = Dob.Day;
+
+            int todayMonth = DateTime.Today.Month;
+            int dobMonth = Dob.Month;
+            if (today == dobDate && todayMonth == dobMonth)
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+                
+            return false;
+
         }
 
         public override string ToString()

@@ -1,17 +1,23 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257905F
+// Student Name : Tan Syn Kit
+// Partner Name : Tan Yi Jing Valery
+//==========================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace S10241870K_PRG2Assignment //syn
+namespace S10241870K_PRG2Assignment //Syn Kit
 {
     internal class Order
     {
         public int Id { get; set; }
         public DateTime TimeReceived { get; set; }
-        public DateTime? TimeFufilled { get; set; }
+        public DateTime? TimeFulfilled { get; set; }
         public List<IceCream> IceCreamList { get; set; } = new List<IceCream>();
         
 
@@ -153,8 +159,8 @@ namespace S10241870K_PRG2Assignment //syn
 
         public override string ToString()
         {
-            if (TimeFufilled != null)
-                return $"Id: {Id} \t Time Received: {TimeReceived} \t Time Fufilled: {TimeFufilled} \t";
+            if (TimeFulfilled != null)
+                return $"Id: {Id} \t Time Received: {TimeReceived} \t Time Fulfilled: {TimeFulfilled} \t";
             
             return $"Id: {Id} \t Time Received: {TimeReceived} \t";
         }

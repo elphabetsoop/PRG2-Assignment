@@ -1,10 +1,16 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257905F
+// Student Name : Tan Syn Kit
+// Partner Name : Tan Yi Jing Valery
+//==========================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S10241870K_PRG2Assignment //syn
+namespace S10241870K_PRG2Assignment //Syn Kit
 {
     internal class PointCard
     {
@@ -50,8 +56,7 @@ namespace S10241870K_PRG2Assignment //syn
         { 
             if (PunchCard == 10)
             {
-                //### 11th ice cream free logic
-                PunchCard = 0;
+                PunchCard = 0; //reset back to 0; method is called to check if this is 11th ice cream
             }
         }
 

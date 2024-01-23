@@ -1,11 +1,17 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257905F
+// Student Name : Tan Syn Kit
+// Partner Name : Tan Yi Jing Valery
+//==========================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace S10241870K_PRG2Assignment //val
+namespace S10241870K_PRG2Assignment //Valery
 {
     internal class Waffle : IceCream 
     {
