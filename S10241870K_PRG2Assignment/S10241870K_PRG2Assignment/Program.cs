@@ -100,7 +100,7 @@ namespace S10241870K_PRG2Assignment
 
                 else if (opn == 4)
                 {
-                    CreateCustomerOrder(customerList); 
+                    //CreateCustomerOrder(customerList); 
                 }
 
                 else if (opn == 5)
@@ -215,16 +215,6 @@ namespace S10241870K_PRG2Assignment
                         Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-13}{pointCard.Tier}");
                         i++; //syn: added counter to display customer number (for opn 5)
                     }  
-
-                    Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
-                    
-                    PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
-                    //pointCard.Tier = customers[3];
-                    customer.Rewards = pointCard; //syn: set attribute pointcard, else pointcard not associated (null)
-                    customerList.Add(customer);
-                    //Console.WriteLine($"{i} \t {customer.ToString()}{pointCard.ToString()}");
-                    Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-10}{pointCard.Tier}");
-                    i++; //syn: added counter to display customer number (for opn 5)
                 }
             }
         } //ListCustomer 
@@ -442,31 +432,12 @@ namespace S10241870K_PRG2Assignment
             Customer newCustomer = new Customer(name, id, customerDob);
             customerList.Add(newCustomer);
 
-            //create a Pointcard object 
-            int points = 0;
-            double totalPrice = 0;
-            int punchCard = 0;
-
-            if (newCustomer.CurrentOrder != null && newCustomer.CurrentOrder.IceCreamList != null)
-            {
-                punchCard = newCustomer.CurrentOrder.IceCreamList.Count;
-
-                foreach (IceCream iceCream in newCustomer.CurrentOrder.IceCreamList)
-                {
-                    double price = iceCream.CalculatePrice();
-                    totalPrice += price;
-                }
-
-                points = (int)Math.Floor(totalPrice * 0.72);
-            }
-
-            PointCard newPointcard = new PointCard(points, punchCard);
-
             //assign Pointcard object to the customer 
+            PointCard newPointcard = new PointCard();
             newCustomer.Rewards = newPointcard;
 
             //append customer information to customers file 
-            string customerDetails = newCustomer.Name + "," + newCustomer.MemberId + "," + newCustomer.Dob.ToString("dd/MM/yyyy") + "," + newPointcard.Points + "," + newPointcard.PunchCard + "," + newPointcard.Tier; 
+            string customerDetails = newCustomer.Name + "," + newCustomer.MemberId + "," + newCustomer.Dob.ToString("dd/MM/yyyy") + "," + newPointcard.Tier + "," + newPointcard.Points + "," + newPointcard.PunchCard; 
             using (StreamWriter sw = new StreamWriter("customers.csv", true))
             {
                 sw.WriteLine(customerDetails);
@@ -543,28 +514,35 @@ namespace S10241870K_PRG2Assignment
                     Console.Write("Flavour(s): ");
                     string? userFlavour = Console.ReadLine();
 
-
-                    for (int i = 0; i < 3 && i < validFlavours.Count; i++)
+                    if (userFlavour != null)
                     {
-                        string flavour = validFlavours[i];
-
-                        if (flavour == userFlavour)
+                        for (int i = 0; i < 3 && i < validFlavours.Count; i++)
                         {
-                            flavour1 = new Flavour(userFlavour, false, 1);
-                            flavours.Add(flavour1);
+                            string flavour = validFlavours[i];
+
+                            if (flavour == userFlavour)
+                            {
+                                flavour1 = new Flavour(userFlavour, false, 1);
+                                flavours.Add(flavour1);
+                            }
+                        }
+
+                        for (int i = 3; i < 6 && i < validFlavours.Count; i++)
+                        {
+                            string flavour = validFlavours[i];
+
+                            if (flavour == userFlavour)
+                            {
+                                flavour1 = new Flavour(userFlavour, true, 1);
+                                flavours.Add(flavour1);
+                            }
                         }
                     }
-
-                    for (int i = 3; i < 6 && i < validFlavours.Count; i++)
+                    else
                     {
-                        string flavour = validFlavours[i];
-
-                        if (flavour == userFlavour)
-                        {
-                            flavour1 = new Flavour(userFlavour, true, 1);
-                            flavours.Add(flavour1);
-                        }
+                        Console.WriteLine("Please input your ice cream flavour."); 
                     }
+                        
 
                     Console.Write("Toppings: ");
                     string? userTopping = Console.ReadLine();
@@ -854,7 +832,6 @@ namespace S10241870K_PRG2Assignment
 
 
         // ### ADVANCED FEATURES ###
-<<<<<<< HEAD
         //opn 7 advanced feature a): Syn Kit
         static void ProcessOrderAndCheckout(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer> customerList)
         {
@@ -987,8 +964,6 @@ namespace S10241870K_PRG2Assignment
                 customer.OrderHistory.Add(checkout); //add to customer order history
             }
         }
-=======
->>>>>>> 834dc2f86b8414cf0387cf900ecf7d487853b333
 
     }
 }
