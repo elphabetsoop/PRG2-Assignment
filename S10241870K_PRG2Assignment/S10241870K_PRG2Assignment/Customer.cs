@@ -38,13 +38,79 @@ namespace S10241870K_PRG2Assignment //Syn Kit
 
         public Order MakeOrder()
         {
-            //logic
+            Queue<Order> goldOrder = new Queue<Order>();
+            Queue<Order> regularOrder = new Queue<Order>();
+            List<Order> orderList = new List<Order>();
+            List<Customer?> customerList = new List<Customer?>();
 
-            // ### START code to prevent ide complaining
-            //remove dur actl implementation         
-            return new Order();
-            // ### END code to prevent ide complaining
-        }
+            using (StreamReader sr = new StreamReader("orders.csv"))
+            {
+                //Create an Order object 
+                Order order = new Order();
+
+
+                string? s = sr.ReadLine(); // read the heading
+                                           // display the heading
+                if (s != null)
+                {
+                    string[] heading = s.Split(',');
+                }
+                while ((s = sr.ReadLine()) != null)     // repeat until end of file
+                {
+                    string[] orderDetails = s.Split(',');
+                    int oID = int.Parse(orderDetails[0]);
+                    int memberId = int.Parse(orderDetails[1]);
+                    DateTime timeReceived = DateTime.Now;
+
+                    order = new Order(oID, timeReceived);
+
+
+                    Order existingOrder = orderList.Find(o => o.Id == oID);
+
+                    if (existingOrder != null) ////order exists in orderList (ie existing order w same ID exists)
+                    {
+                        existingOrder.AddIceCream(newIceCream);
+                    }
+                    else //no existing order in orderList, add order to list & queue
+                    {
+                        order.AddIceCream(newIceCream);
+                        orderList.Add(order);
+
+                        if (string.IsNullOrEmpty(orderDetails[3])) //time fulfilled is blank, pending order
+                        {
+                            //add pending orders to queue
+                            //append to gold queue
+                            foreach (Customer gc in customerList)
+                            {
+                                if (gc.MemberId == memberId)
+                                {
+                                    goldOrder.Enqueue(order);
+                                }
+                            }
+
+                            //otherwise append to regular queue
+                            if (!goldOrder.Contains(order))
+                            {
+                                regularOrder.Enqueue(order);
+                            }
+                        }
+                        else //time fulfilled not blank, 
+                        {
+                            DateTime timeFulfilled = Convert.ToDateTime(orderDetails[3]);
+                            order.TimeFulfilled = timeFulfilled;
+
+                            //add order to OrderHistory list, alr fulfilled
+                            foreach (Customer c in customerList)
+                            {
+                                if (c.MemberId == memberId)
+                                    c.OrderHistory.Add(order);
+                            }
+                        }
+                    }
+                }
+            }
+            return new Order(); 
+        }       
 
 
         public bool IsBirthday()

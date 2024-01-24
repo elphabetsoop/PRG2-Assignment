@@ -326,7 +326,6 @@ namespace S10241870K_PRG2Assignment
                             break;
                     }
 
-                    sr.BaseStream.Position = 0;
                 }
                 
             }
@@ -453,229 +452,172 @@ namespace S10241870K_PRG2Assignment
             }
 
             //Prompt user to select a customer 
+            Console.Write("\nCustomer's no.: ");
+            int cusNo = Convert.ToInt32(Console.ReadLine());
+
+            if (cusNo < 1 || cusNo > customerList.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(cusNo),
+                    "Customer no. is not within the range of given customers.");
+            }
+
+            Customer customerChosen = customerList[cusNo - 1];
+
 
             while (true)
             {
-                Console.Write("\nCustomer's no.: ");
-                int? id = Convert.ToInt32(Console.ReadLine());
 
-                bool customerFound = false;
-                foreach (Customer customer in customerList)
+                Console.WriteLine(customerChosen.Name);
+                IceCreamMenu(); // init IceCreamMenu method to showcase menu
+
+                //prompt user to enter their ice cream order 
+                IceCream newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
+
+                //prompt the user if they would like to add another ice cream to their order 
+                Console.Write("Would you like to add another ice cream to your order? (Y/N) ");
+                string? secIceCream = Console.ReadLine();
+
+                if (secIceCream.ToLower() == "y")
                 {
-                    if ((customerList.IndexOf(customer) + 1) == id)
-                    {
-                        customerFound = true;
-                        IceCreamMenu(); //init IceCreamMenu method to showcase menu 
-
-                        IceCreamOrder(goldOrder, regularOrder, customerList, orderList, validFlavours, validWaffle, validToppings);
-
-                        //prompt the user if they would like to add another ice cream to their order 
-                        while (true)
-                        {
-                            Console.Write("Would you like to add another ice cream to your order? (Y/N) ");
-                            string? secIceCream = Console.ReadLine();
-
-                            if (secIceCream.ToLower() == "y")
-                            {
-                                IceCreamOrder(goldOrder, regularOrder, customerList, orderList, validFlavours, validWaffle, validToppings);
-                            } //repeat the steps 
-                            else if (secIceCream.ToLower() == "n")
-                            {
-                                break;
-                            } //continue to the next steps if they do not want another ice cream 
-                        }
-                    }
-
-                }
-
-                if (!customerFound)
+                    newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
+                } //repeat the steps 
+                else if (secIceCream.ToLower() == "n")
                 {
-                    Console.WriteLine("Please input a valid customer's no.");
-                }
+                    break;
+                } //continue to the next steps if they do not want another ice cream 
+
+                //display message to indicate order has been made successfully 
+                Console.WriteLine("Order has been made successfully!");
             }
+        }//CreateCustomerOrder 
 
 
-        } //CreateCustomerOrder 
-
-        static void IceCreamOrder(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer> customerList, List<Order> orderList, List<string> validFlavours, List<string> validWaffle, List<string> validToppings)
+        static IceCream? AddIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
-            //Create an Order object 
-            Order order = new Order();  //id is not properly done, queue number from the queue created in option 2?? 
-
-            List<Flavour> flavours = new List<Flavour>();
-            List<Topping> toppings = new List<Topping>();
-            IceCream? iceCream = null;
-            Flavour flavour1 = new Flavour();
-            Topping topping1 = new Topping();
-
-            //prompt user to enter their ice cream order 
-            Console.WriteLine("\nIce cream order: ");
-            Console.Write("Option: ");
-            string? opt = Console.ReadLine();
-            Console.Write("Scoop(s) (1-3): ");
-            int scoops = Convert.ToInt32(Console.ReadLine());
-
-            for (int i = 0; i < scoops; i++)
+            IceCream newIceCream = null; //init null IceCream object
+            Order order = new Order();
+            try
             {
-                Console.Write("Flavour(s): ");
-                string? userFlavour = Console.ReadLine();
+                //add an entirely new ice cream object to the order
+                Console.Write("\nSelect type: (Cup/Cone/Waffle): ");
+                string? opn = Console.ReadLine();
 
-                foreach (string flavour in validFlavours)
+                Console.Write("Scoops (1-3): ");
+                int scoops = Convert.ToInt32(Console.ReadLine());
+
+                if (scoops < 0 || scoops > 3)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(scoops), "Number of scoops must be between 1 and 3.");
+                }
+
+                Console.Write("Flavours (separated by comma): ");
+                string[] fL = Console.ReadLine().Split(",");
+
+                if (fL.Length == 0 || fL.Length > 3)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(fL),
+                        $"Number of flavours must be equals to number of scoops ({scoops}).");
+                }
+
+                List<Flavour> flavours = new List<Flavour>();
+
+                foreach (string f in fL)
                 {
                     bool isPremium;
-                    if (!string.IsNullOrEmpty(userFlavour) && (validFlavours.IndexOf(userFlavour.ToLower()) != -1)) //check if flavour is valid
+                    if (string.IsNullOrEmpty(f) &&
+                        (validFlavours.Contains(f))) //check if flavour is valid
                     {
-                        if (validFlavours.IndexOf(userFlavour.ToLower()) >= 3) //premium
+                        if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
                             isPremium = true;
                         else
                             isPremium = false;
-                        flavours.Add(new Flavour(userFlavour, isPremium, 1));
-                        break;
+                        flavours.Add(new Flavour(f, isPremium, 1));
+                    }
+                }
+
+                Console.Write("Toppings (separated by comma): ");
+                string[] tL = Console.ReadLine().Split(",");
+                List<Topping> toppings = new List<Topping>();
+
+                if (tL.Length > 4)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(tL),
+                        "Number of toppings must be less than or equals to 4");
+                }
+
+                foreach (string t in tL)
+                {
+                    if (!string.IsNullOrEmpty(t) && (validToppings.Contains(t)))
+                    {
+                        toppings.Add(new Topping(t));
+                    }
+                }
+
+                if (opn.ToLower() == "cone")
+                {
+                    bool isDipped;
+
+                    while (true)
+                    {
+                        Console.Write("Dipped cone (y/n): ");
+                        string dipped = Console.ReadLine();
+
+                        if (dipped.ToLower() == "y")
+                        {
+                            isDipped = true;
+                            break;
+                        }
+                        else if (dipped.ToLower() == "n")
+                        {
+                            isDipped = false;
+                            break;
+                        }
+                        else
+                            Console.WriteLine("Please enter 'y' or 'n'");
+                    }
+
+                    //init cone
+                    newIceCream = new Cone(scoops, flavours, toppings, isDipped);
+                    order.AddIceCream(newIceCream);
+                }
+                else if (opn.ToLower() == "waffle")
+                {
+
+                    Console.Write("Waffle flavour: ");
+                    string waffleFlavour = Console.ReadLine();
+
+                    if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
+                    {
+                        //init waffle
+                        newIceCream = new Waffle(scoops, flavours, toppings, waffleFlavour);
+
                     }
                     else
                     {
-                        Console.WriteLine("Please input your ice cream flavour.");
+                        Console.WriteLine("Invalid waffle flavour.");
                     }
                 }
-            }
 
-
-            Console.Write("Toppings: ");
-            string? userTopping = Console.ReadLine();
-
-            if (!string.IsNullOrEmpty(userTopping))
-            {
-                foreach (string topping in validToppings)
+                else if (opn.ToLower() == "cup")
                 {
-                    if (topping == userTopping.ToLower())
-                    {
-                        topping1 = new Topping(userTopping);
-                        toppings.Add(topping1);
-                    }
-                }
-            }
-            else
-            {
-                topping1 = new Topping();
-                toppings.Add(topping1);
-            }
-
-            while (true)
-            {
-                if (opt.ToLower() == "cone" || opt.ToLower() == "waffle" || opt.ToLower() == "cup")
-                {
-
-                    if (opt.ToLower() == "cone")
-                    {
-                        Console.WriteLine("Add on chocolate-dipped cone (y/n)? ");
-                        string? chocoDippedCone = Console.ReadLine();
-
-                        if (chocoDippedCone.ToLower() == "y")
-                        {
-                            iceCream = new Cone(scoops, flavours, toppings, true);
-                        }
-
-                        else if (chocoDippedCone.ToLower() == "n")
-                        {
-                            iceCream = new Cone(scoops, flavours, toppings, false);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Please enter 'y' or 'n'.");
-                        }
-                        break;
-                    }
-                    else if (opt.ToLower() == "waffle")
-                    {
-                        Console.Write("Waffle flavour? ");
-                        string? waffleOpt = Console.ReadLine();
-
-                        foreach (string waffleFlavour in validWaffle)
-                        {
-                            if (waffleOpt.ToLower() == waffleFlavour.ToLower())
-                            {
-                                iceCream = new Waffle(scoops, flavours, toppings, waffleOpt);
-                                break;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Please input a valid flavour.");
-                            }
-                        }
-                        break;
-                    }
-                    else if (opt.ToLower() == "cup")
-                    {
-                        iceCream = new Cup(scoops, flavours, toppings);
-                        break;
-                    }
+                    //init cup
+                    newIceCream = new Cup(scoops, flavours, toppings);
                 }
                 else
                 {
-                    Console.WriteLine("Please input a valid option.");
+                    Console.WriteLine("Invalid option. Please try again.");
                 }
             }
-
-            using (StreamReader sr = new StreamReader("orders.csv"))
+            catch (FormatException formatEx)
             {
-                string? s = sr.ReadLine(); // read the heading
-                                           // display the heading
-                if (s != null)
-                {
-                    string[] heading = s.Split(',');
-                }
-                while ((s = sr.ReadLine()) != null)     // repeat until end of file
-                {
-                    string[] orderDetails = s.Split(',');
-                    int oID = int.Parse(orderDetails[0]);
-                    int memberId = int.Parse(orderDetails[1]);
-
-                    Order existingOrder = orderList.Find(o => o.Id == oID);
-
-                    if (existingOrder != null) ////order exists in orderList (ie existing order w same ID exists)
-                    {
-                        existingOrder.AddIceCream(iceCream);
-                    }
-                    else //no existing order in orderList, add order to list & queue
-                    {
-                        order.AddIceCream(iceCream);
-                        orderList.Add(order);
-
-                        if (string.IsNullOrEmpty(orderDetails[3])) //time fulfilled is blank, pending order
-                        {
-                            //add pending orders to queue
-                            //add to gold queue
-                            foreach (Customer gc in customerList)
-                            {
-                                if (gc.MemberId == memberId)
-                                {
-                                    goldOrder.Enqueue(order);
-                                }
-                            }
-
-                            //add to regular queue
-                            if (!goldOrder.Contains(order))
-                            {
-                                regularOrder.Enqueue(order);
-                            }
-                        }
-                        else //time fulfilled not blank, 
-                        {
-                            DateTime timeFulfilled = Convert.ToDateTime(orderDetails[3]);
-                            order.TimeFulfilled = timeFulfilled;
-
-                            //add order to OrderHistory list, alr fulfilled
-                            foreach (Customer c in customerList)
-                            {
-                                if (c.MemberId == memberId)
-                                    c.OrderHistory.Add(order);
-                            }
-                        }
-                    }
-                }
+                Console.WriteLine($"{formatEx.Source} {formatEx.Message}");
             }
-
-        } // IceCreamOrder 
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return newIceCream;
+        }
 
         static void IceCreamMenu()
         {
@@ -850,136 +792,6 @@ namespace S10241870K_PRG2Assignment
                 Console.WriteLine(ex.Message);
             }
         } //ModifyOrderDetails()
-
-
-        static IceCream? AddIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
-        {
-            IceCream newIceCream = null; //init null IceCream object
-
-            try
-            {
-                //add an entirely new ice cream object to the order
-                Console.Write("Select type: (Cup/Cone/Waffle): ");
-                string opn = Console.ReadLine();
-
-                Console.Write("Scoops: ");
-                int scoops = Convert.ToInt32(Console.ReadLine());
-
-                if (scoops < 0 || scoops > 3)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(scoops), "Number of scoops must be between 1 and 3.");
-                }
-
-                Console.Write("Flavours (separated by comma): ");
-                string[] fL = Console.ReadLine().Split(",");
-
-                if (fL.Length == 0 || fL.Length > 3)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(fL),
-                        $"Number of flavours must be equals to number of scoops ({scoops}).");
-                }
-
-                List<Flavour> flavours = new List<Flavour>();
-
-                foreach (string f in fL)
-                {
-                    bool isPremium;
-                    if (string.IsNullOrEmpty(f) &&
-                        (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
-                    {
-                        if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
-                            isPremium = true;
-                        else
-                            isPremium = false;
-                        flavours.Add(new Flavour(f, isPremium, 1));
-                    }
-                }
-
-                Console.Write("Toppings (separated by comma): ");
-                string[] tL = Console.ReadLine().Split(",");
-                List<Topping> toppings = new List<Topping>();
-
-                if (tL.Length > 4)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(tL),
-                        "Number of toppings must be less than or equals to 4");
-                }
-
-                foreach (string t in tL)
-                {
-                    if (!string.IsNullOrEmpty(t) && (validToppings.IndexOf(t.ToLower()) != -1))
-                    {
-                        toppings.Add(new Topping(t));
-                    }
-                }
-
-                if (opn.ToLower() == "cone")
-                {
-                    bool isDipped;
-
-                    while (true)
-                    {
-                        Console.Write("Dipped cone (y/n): ");
-                        string dipped = Console.ReadLine();
-
-                        if (dipped.ToLower() == "y")
-                        {
-                            isDipped = true;
-                            break;
-                        }
-                        else if (dipped.ToLower() == "n")
-                        {
-                            isDipped = false;
-                            break;
-                        }
-                        else
-                            Console.WriteLine("Please enter 'y' or 'n'");
-                    }
-
-                    //init cone
-                    newIceCream = new Cone(scoops, flavours, toppings, isDipped);
-                }
-                else if (opn.ToLower() == "waffle")
-                {
-                    while (true)
-                    {
-                        Console.Write("Waffle flavour: ");
-                        string waffleFlavour = Console.ReadLine();
-
-                        if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
-                        {
-                            //init waffle
-                            newIceCream = new Waffle(scoops, flavours, toppings, waffleFlavour);
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid waffle flavour.");
-                        }
-                    }
-                }
-                else if (opn.ToLower() == "cup")
-                {
-                    //init cup
-                    newIceCream = new Cup(scoops, flavours, toppings);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid option. Please try again.");
-                }
-            }
-            catch (FormatException formatEx)
-            {
-                Console.WriteLine($"{formatEx.Source} {formatEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return newIceCream;
-        }
-
-
 
 
         // ### ADVANCED FEATURES ###
