@@ -762,21 +762,31 @@ namespace S10241870K_PRG2Assignment
         static void ModifyOrderDetails(List<Customer?> customerList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
             ListCustomer(customerList); //list customers
-            Console.Write("Select a customer: ");
-            int cNo = Convert.ToInt32(Console.ReadLine());
-            Customer? c = customerList[cNo - 1];
+
 
             try
             {
+                Console.Write("Select a customer: ");
+                int cNo = Convert.ToInt32(Console.ReadLine());
+
+                if (cNo < 0 || cNo > customerList.Count)
+                {
+                    throw new IndexOutOfRangeException($"Please enter a customer number, from 1 to {customerList.Count}");
+                }
+
+                Customer? c = customerList[cNo - 1];
+
                 if (c.CurrentOrder == null)
                 {
-                    throw new NullReferenceException();
+                    throw new NullReferenceException($"Customer {cNo} does not currently have an order.");
                 }
+
                 Order? currentOrder = c.CurrentOrder; //retrieve customer's current order
 
                 for (int i = 0; i < currentOrder.IceCreamList.Count; i++)
                 {
-                    Console.WriteLine($"{i + 1}. {currentOrder.IceCreamList[i]}"); //list all ice cream objs in current order
+                    Console.WriteLine(
+                        $"{i + 1}. {currentOrder.IceCreamList[i]}"); //list all ice cream objs in current order
                 }
 
                 while (true)
@@ -839,9 +849,10 @@ namespace S10241870K_PRG2Assignment
                         $"{i + 1}. {currentOrder.IceCreamList[i]}"); //list all ice cream objs in updated order
                 }
             }
-            catch (NullReferenceException)
+            catch (FormatException formatEx)
             {
-                Console.WriteLine($"Customer {cNo} does not currently have an order.");
+                Console.WriteLine($"Please enter a valid option.");
+                Console.WriteLine(formatEx.Message);
             }
             catch (Exception ex)
             {
@@ -853,130 +864,141 @@ namespace S10241870K_PRG2Assignment
         static IceCream? AddIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
             IceCream newIceCream = null; //init null IceCream object
-
-            try
+            List<string> validOpns = new List<string>{"cone", "cup", "waffle" };
+        
+            while (true)
             {
-                //add an entirely new ice cream object to the order
-                Console.Write("Select type: (Cup/Cone/Waffle): ");
-                string opn = Console.ReadLine();
-
-                if (opn.ToLower() != "cone" || opn.ToLower() != "waffle" || opn.ToLower() != "cup") //invalid option
+                try
                 {
-                    throw new FormatException("Please enter a valid option.");
-                }
+                    //add an entirely new ice cream object to the order
+                    Console.Write("Select type: (Cup/Cone/Waffle): ");
+                    string opn = Console.ReadLine();
 
-                Console.Write("Scoops: ");
-                int scoops = Convert.ToInt32(Console.ReadLine());
-
-                if (scoops < 0 || scoops > 3)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(scoops), "Number of scoops must be between 1 and 3.");
-                }
-
-                Console.Write("Flavours (separated by comma): ");
-                string flavourChoice = Console.ReadLine();
-                string[] fL = flavourChoice.Split(",");
-
-                if (string.IsNullOrEmpty(flavourChoice) || fL.Length == 0 || fL.Length > 3)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(fL),
-                        $"Number of flavours must be equals to number of scoops ({scoops}).");
-                }
-
-                List<Flavour> flavours = new List<Flavour>();
-
-                foreach (string f in fL)
-                {
-                    bool isPremium;
-                    if (string.IsNullOrEmpty(f) &&
-                        (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
+                    
+                    if (validOpns.Find(op => op == opn.ToLower()) == null) //invalid option
                     {
-                        if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
-                            isPremium = true;
-                        else
-                            isPremium = false;
-                        flavours.Add(new Flavour(f, isPremium, 1));
-                    }
-                }
-
-                Console.Write("Toppings (separated by comma): ");
-                string[] tL = Console.ReadLine().Split(",");
-                List<Topping> toppings = new List<Topping>();
-
-                if (tL.Length > 4)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(tL),
-                        "Number of toppings must be less than or equals to 4");
-                }
-
-                foreach (string t in tL)
-                {
-                    if (!string.IsNullOrEmpty(t) && (validToppings.IndexOf(t.ToLower()) != -1))
-                    {
-                        toppings.Add(new Topping(t));
-                    }
-                }
-
-                if (opn.ToLower() == "cone")
-                {
-                    bool isDipped;
-
-                    while (true)
-                    {
-                        Console.Write("Dipped cone (y/n): ");
-                        string dipped = Console.ReadLine();
-
-                        if (dipped.ToLower() == "y")
-                        {
-                            isDipped = true;
-                            break;
-                        }
-                        else if (dipped.ToLower() == "n")
-                        {
-                            isDipped = false;
-                            break;
-                        }
-                        else
-                            Console.WriteLine("Please enter 'y' or 'n'");
+                        throw new ArgumentException("Please enter a valid option.");
                     }
 
-                    //init cone
-                    newIceCream = new Cone(scoops, flavours, toppings, isDipped);
-                }
-                else if (opn.ToLower() == "waffle")
-                {
-                    while (true)
-                    {
-                        Console.Write("Waffle flavour: ");
-                        string waffleFlavour = Console.ReadLine();
+                    Console.Write("Scoops: ");
+                    int scoops = Convert.ToInt32(Console.ReadLine());
 
-                        if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
+                    if (scoops < 0 || scoops > 3)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(scoops), "Number of scoops must be between 1 and 3.");
+                    }
+
+                    Console.Write("Flavours (separated by comma): ");
+                    string flavourChoice = Console.ReadLine();
+                    string[] fL = flavourChoice.Split(",");
+
+                    if (string.IsNullOrEmpty(flavourChoice) || fL.Length != scoops)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(flavourChoice),
+                            $"Number of flavours must be equals to number of scoops ({scoops}).");
+                    }
+
+                    List<Flavour> flavours = new List<Flavour>();
+
+                    foreach (string f in fL)
+                    {
+                        bool isPremium;
+                        if (!string.IsNullOrEmpty(f) &&
+                            (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
                         {
-                            //init waffle
-                            newIceCream = new Waffle(scoops, flavours, toppings, waffleFlavour);
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid waffle flavour.");
+                            if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
+                                isPremium = true;
+                            else
+                                isPremium = false;
+                            flavours.Add(new Flavour(f, isPremium, 1));
                         }
                     }
+
+                    Console.Write("Toppings (separated by comma): ");
+                    string toppingChoice = Console.ReadLine();
+                    string[] tL = toppingChoice.Split(",");
+                    List<Topping> toppings = new List<Topping>();
+
+                    if (tL.Length > 4)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(toppingChoice),
+                            "Number of toppings must be less than or equals to 4");
+                    }
+
+                    foreach (string t in tL)
+                    {
+                        if (!string.IsNullOrEmpty(t) && (validToppings.IndexOf(t.ToLower()) != -1))
+                        {
+                            toppings.Add(new Topping(t));
+                        }
+                    }
+
+                    if (opn.ToLower() == "cone")
+                    {
+                        bool isDipped;
+
+                        while (true)
+                        {
+                            Console.Write("Dipped cone (y/n): ");
+                            string dipped = Console.ReadLine();
+
+                            if (dipped.ToLower() == "y")
+                            {
+                                isDipped = true;
+                                break;
+                            }
+                            else if (dipped.ToLower() == "n")
+                            {
+                                isDipped = false;
+                                break;
+                            }
+                            else
+                                Console.WriteLine("Please enter 'y' or 'n'");
+                        }
+
+                        //init cone
+                        newIceCream = new Cone(scoops, flavours, toppings, isDipped);
+                    }
+                    else if (opn.ToLower() == "waffle")
+                    {
+                        while (true)
+                        {
+                            Console.Write("Waffle flavour: ");
+                            string waffleFlavour = Console.ReadLine();
+
+                            if (validWaffle.IndexOf(waffleFlavour.ToLower()) != -1)
+                            {
+                                //init waffle
+                                newIceCream = new Waffle(scoops, flavours, toppings, waffleFlavour);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid waffle flavour.");
+                            }
+                        }
+                    }
+                    else if (opn.ToLower() == "cup")
+                    {
+                        //init cup
+                        newIceCream = new Cup(scoops, flavours, toppings);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option. Please try again.");
+                    }
+
+                    Console.WriteLine(newIceCream);
+                    return newIceCream;
                 }
-                else if (opn.ToLower() == "cup")
+                catch (Exception ex)
                 {
-                    //init cup
-                    newIceCream = new Cup(scoops, flavours, toppings);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid option. Please try again.");
+                    Console.WriteLine(ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return newIceCream;
+            
+            
+            
         }
 
 
