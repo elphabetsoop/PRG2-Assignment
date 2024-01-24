@@ -816,7 +816,7 @@ namespace S10241870K_PRG2Assignment
                     {
                         IceCreamMenu();
 
-                        IceCream newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
+                        IceCream newIceCream = CreateIceCream(validFlavours, validToppings, validWaffle);
                         currentOrder.AddIceCream(newIceCream);
                         break;
                     }
@@ -861,7 +861,7 @@ namespace S10241870K_PRG2Assignment
         } //ModifyOrderDetails()
 
 
-        static IceCream? AddIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
+        static IceCream? CreateIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
             IceCream newIceCream = null; //init null IceCream object
             List<string> validOpns = new List<string>{"cone", "cup", "waffle" };
