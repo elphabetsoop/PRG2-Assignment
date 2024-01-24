@@ -26,7 +26,7 @@ namespace S10241870K_PRG2Assignment //Syn Kit
 
         public Customer()
         {
-            
+
         }
 
         public Customer(string n, int mID, DateTime dob)
@@ -38,12 +38,10 @@ namespace S10241870K_PRG2Assignment //Syn Kit
 
         public Order MakeOrder()
         {
-            //logic
-
-            // ### START code to prevent ide complaining
-            //remove dur actl implementation         
+            //create an order object 
+            Order order = new Order();
+            CurrentOrder = order;
             return new Order();
-            // ### END code to prevent ide complaining
         }
 
 
@@ -56,7 +54,7 @@ namespace S10241870K_PRG2Assignment //Syn Kit
             int dobMonth = Dob.Month;
             if (today == dobDate && todayMonth == dobMonth)
                 return true;
-                
+
             return false;
 
         }
