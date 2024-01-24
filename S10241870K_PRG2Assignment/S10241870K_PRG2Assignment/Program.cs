@@ -325,8 +325,6 @@ namespace S10241870K_PRG2Assignment
                         else
                             break;
                     }
-
-                    sr.BaseStream.Position = 0;
                 }
                 
             }
@@ -862,6 +860,11 @@ namespace S10241870K_PRG2Assignment
                 Console.Write("Select type: (Cup/Cone/Waffle): ");
                 string opn = Console.ReadLine();
 
+                if (opn.ToLower() != "cone" || opn.ToLower() != "waffle" || opn.ToLower() != "cup") //invalid option
+                {
+                    throw new FormatException("Please enter a valid option.");
+                }
+
                 Console.Write("Scoops: ");
                 int scoops = Convert.ToInt32(Console.ReadLine());
 
@@ -871,9 +874,10 @@ namespace S10241870K_PRG2Assignment
                 }
 
                 Console.Write("Flavours (separated by comma): ");
-                string[] fL = Console.ReadLine().Split(",");
+                string flavourChoice = Console.ReadLine();
+                string[] fL = flavourChoice.Split(",");
 
-                if (fL.Length == 0 || fL.Length > 3)
+                if (string.IsNullOrEmpty(flavourChoice) || fL.Length == 0 || fL.Length > 3)
                 {
                     throw new ArgumentOutOfRangeException(nameof(fL),
                         $"Number of flavours must be equals to number of scoops ({scoops}).");
@@ -967,10 +971,6 @@ namespace S10241870K_PRG2Assignment
                 {
                     Console.WriteLine("Invalid option. Please try again.");
                 }
-            }
-            catch (FormatException formatEx)
-            {
-                Console.WriteLine($"{formatEx.Source} {formatEx.Message}");
             }
             catch (Exception ex)
             {
