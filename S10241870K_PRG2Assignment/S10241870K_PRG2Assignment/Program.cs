@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
+using System.Xml.Linq;
 
 namespace S10241870K_PRG2Assignment
 {
@@ -417,80 +418,63 @@ namespace S10241870K_PRG2Assignment
         static void CreateCustomerOrder(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer> customerList, List<Order> orderList, List<string> validFlavours, List<string> validWaffle, List<string> validToppings)
         {
             //List customers from customers csv 
-            using (StreamReader sr = new StreamReader("customers.csv"))
+            ListCustomer(customerList); 
+
+            try
             {
-                int i = 1;
-                string? s = sr.ReadLine(); // read the heading
-                                           // display the heading
-                if (s != null)
+                //Prompt user to select a customer 
+                Console.Write("\nCustomer's no.: ");
+                int cusNo = Convert.ToInt32(Console.ReadLine());
+
+                if (cusNo < 1 || cusNo > customerList.Count)
                 {
-                    string[] heading = s.Split(',');
+                    throw new IndexOutOfRangeException($"Please enter a customer number, from 1 to {customerList.Count}");
                 }
 
-                Console.WriteLine($"{"No.",-5}{"Name",-20}{"Member ID",-15}{"DOB",-15}{"Points",-10}{"PunchCard",-13}{"Tier"}");
-                while ((s = sr.ReadLine()) != null)     // repeat until end of file
-                {
-                    string[] customers = s.Split(',');
-                    DateTime date;
+                Customer customerChosen = customerList[cusNo - 1]; //retrieve selected customer 
+                
+                DateTime timeReceived = DateTime.Now;
+                int newOrderId = orderList.Count;
+                Order newOrder = customerChosen.MakeOrder(); //init MakeOrder() and retrieve order obj 
+                newOrder.TimeReceived = timeReceived;
+                newOrder.Id = newOrderId; 
 
-                    if (DateTime.TryParse(customers[2], out date))
+                while (true)
+                {
+                    
+                    IceCreamMenu(); // init IceCreamMenu method to showcase menu
+
+                    //prompt user to enter their ice cream order, retrieve ice cream obj 
+                    IceCream newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
+
+                    // append the new order to the orders.csv file
+                   
+
+                    newOrder.AddIceCream(newIceCream);  //init AddIceCream() to add ice cream obj to the icecream list 
+
+                    //prompt the user if they would like to add another ice cream to their order 
+                    Console.Write("Would you like to add another ice cream to your order? (Y/N) ");
+                    string? nextIceCream = Console.ReadLine();
+
+                    if (nextIceCream.ToLower() == "y")
                     {
-                        if (!DateTime.TryParse(customers[2], out date))
-                        {
-                            Console.WriteLine("Error in parsing DateTime from string.");
-                        }
+                        newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
+                    } //repeat the steps 
+                    else if (nextIceCream.ToLower() == "n")
+                    {
+                        break;
+                    } //continue to the next steps if they do not want another ice cream 
 
-                        Customer customer = new Customer(customers[0], Convert.ToInt32(customers[1]), date);
-                        customerList.Add(customer);
-                        PointCard pointCard = new PointCard(Convert.ToInt32(customers[4]), Convert.ToInt32(customers[5]));
-                        //pointCard.Tier = customers[3];
-                        customer.Rewards = pointCard; //syn: set attribute pointcard, else pointcard not associated (null)
-                        Console.WriteLine($"{i,-5}{customer.Name,-20}{customer.MemberId,-15}{customer.Dob.ToString("dd/MM/yyyy"),-15}{pointCard.Points,-10}{pointCard.PunchCard,-13}{pointCard.Tier}");
-                        i++; //syn: added counter to display customer number (for opn 5)
-                    }
+                    //display message to indicate order has been made successfully 
+                    Console.WriteLine("Order has been made successfully!");
                 }
             }
 
-            //Prompt user to select a customer 
-            Console.Write("\nCustomer's no.: ");
-            int cusNo = Convert.ToInt32(Console.ReadLine());
-
-            if (cusNo < 1 || cusNo > customerList.Count)
+            catch (Exception ex)
             {
-                throw new ArgumentOutOfRangeException(nameof(cusNo),
-                    "Customer no. is not within the range of given customers.");
-            }
-
-            Customer customerChosen = customerList[cusNo - 1];
-
-
-            while (true)
-            {
-
-                Console.WriteLine(customerChosen.Name);
-                IceCreamMenu(); // init IceCreamMenu method to showcase menu
-
-                //prompt user to enter their ice cream order 
-                IceCream newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
-
-                //prompt the user if they would like to add another ice cream to their order 
-                Console.Write("Would you like to add another ice cream to your order? (Y/N) ");
-                string? secIceCream = Console.ReadLine();
-
-                if (secIceCream.ToLower() == "y")
-                {
-                    newIceCream = AddIceCream(validFlavours, validToppings, validWaffle);
-                } //repeat the steps 
-                else if (secIceCream.ToLower() == "n")
-                {
-                    break;
-                } //continue to the next steps if they do not want another ice cream 
-
-                //display message to indicate order has been made successfully 
-                Console.WriteLine("Order has been made successfully!");
+                Console.WriteLine(ex.Message);
             }
         }//CreateCustomerOrder 
-
 
         static IceCream? AddIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
