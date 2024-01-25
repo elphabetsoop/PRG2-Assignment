@@ -13,7 +13,7 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace S10241870K_PRG2Assignment //Valery
 {
-    internal class Waffle : IceCream 
+    internal class Waffle : IceCream
     {
 
         //property
@@ -21,15 +21,16 @@ namespace S10241870K_PRG2Assignment //Valery
 
         //constructor 
         public Waffle() { }
-        public Waffle(int scoops, List<Flavour> flavours, List<Topping> toppings, string waffleflavour):base("Waffle", scoops, flavours, toppings)
+        public Waffle(int scoops, List<Flavour> flavours, List<Topping> toppings, string waffleflavour) : base("Waffle", scoops, flavours, toppings)
         {
-            WaffleFlavour = waffleflavour; 
+            WaffleFlavour = waffleflavour;
         }
 
         //methods 
         public override double CalculatePrice()
         {
             double price;
+            int premiumPrice = 0;
 
             if (Scoops == 1)
             {
@@ -50,20 +51,28 @@ namespace S10241870K_PRG2Assignment //Valery
 
             double toppingPrice = Toppings.Count * 1.0;
 
+            foreach (Flavour f in Flavours) //iterate through flavours, if premium add $2
+            {
+                if (f.Premium == true)
+                {
+                    premiumPrice += 2;
+                }
+            }
+
             if (WaffleFlavour.ToLower() == "red velvet" ||
                 WaffleFlavour.ToLower() == "charcoal" ||
                 WaffleFlavour.ToLower() == "pandan")
             {
-                return price + toppingPrice + 3.0;
+                return price + toppingPrice + premiumPrice + 3.0;
             }
             else
             {
-                return price + toppingPrice;
+                return price + toppingPrice + premiumPrice;
             }
         }
         public override string ToString()
         {
-            return $"{WaffleFlavour} " + base.ToString(); 
+            return $"{WaffleFlavour} " + base.ToString();
         }
     }
 }
