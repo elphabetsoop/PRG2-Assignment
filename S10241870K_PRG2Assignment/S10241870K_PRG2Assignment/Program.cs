@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
+using System.Security.Cryptography;
 
 namespace S10241870K_PRG2Assignment
 {
@@ -33,7 +34,7 @@ namespace S10241870K_PRG2Assignment
             List<string> validToppings = new List<string> { "sprinkles", "mochi", "sago", "oreos" };
             List<string> validWaffle = new List<string> { "original", "red velvet", "charcoal", "pandan" };
 
-            //init customer list, order list
+            //init customer list, order list and regular/gold queue
             InitCustomer(customerList);
             (Queue<Order>, Queue<Order>) orders = InitOrders(customerList, orderList, validFlavours, validToppings, validWaffle);
 
@@ -287,23 +288,7 @@ namespace S10241870K_PRG2Assignment
 
                                 if (string.IsNullOrEmpty(orderInfo[3])) //time fulfilled is blank, pending order
                                 {
-                                    foreach (Customer c in customerList)
-                                    {
-                                        //Console.WriteLine(c + $"\t{c.Rewards}");
-                                        if (c.MemberId == memberId)
-                                        {
-                                            //add order to respective queues
-                                            if (c.Rewards.Tier.ToLower() == "gold")
-                                            {
-                                                goldOrder.Enqueue(order);
-                                            }
-                                            else // Ordinary or Silver
-                                                regularOrder.Enqueue(order);
-
-                                            //add order to customer's CurrentOrder
-                                            c.CurrentOrder = order;
-                                        }
-                                    }
+                                    QueueOrders(order, memberId, customerList, goldOrder, regularOrder);
                                 }
                                 else //time fulfilled not blank, 
                                 {
@@ -337,6 +322,29 @@ namespace S10241870K_PRG2Assignment
             
             return (goldOrder, regularOrder); //returns tuple: 2 queues
         } //InitOrders(): Syn Kit
+
+        static void QueueOrders(Order order, int memberId, List<Customer> customerList, Queue<Order> goldOrder, Queue<Order> regularOrder)
+        {
+            foreach (Customer c in customerList)
+            {
+                //Console.WriteLine(c + $"\t{c.Rewards}");
+                if (c.MemberId == memberId)
+                {
+                    //add order to respective queues
+                    if (c.Rewards.Tier.ToLower() == "gold")
+                    {
+                        goldOrder.Enqueue(order);
+                    }
+                    else // Ordinary or Silver
+                        regularOrder.Enqueue(order);
+
+                    //add order to customer's CurrentOrder
+                    c.CurrentOrder = order;
+                }
+            }
+        }//QueueOrders(): Syn Kit
+
+
 
         static void ListCurrentOrders(Queue<Order> goldOrder, Queue<Order> regularOrder)
         {
@@ -459,6 +467,9 @@ namespace S10241870K_PRG2Assignment
                     {
                         break;
                     } //continue to the next steps if they do not want another ice cream 
+
+                    orderList.Add(newOrder);
+                    QueueOrders(newOrder, customerChosen.MemberId, customerList, goldOrder, regularOrder ); //syn: add new order to orderList and queue (fix opn 2 dependency)
 
                     //display message to indicate order has been made successfully 
                     Console.WriteLine("Order has been made successfully!");
