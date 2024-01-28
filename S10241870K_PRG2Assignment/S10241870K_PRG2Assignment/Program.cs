@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
 using System.Security.Cryptography;
+using System.Collections;
 
 namespace S10241870K_PRG2Assignment
 {
@@ -442,45 +443,59 @@ namespace S10241870K_PRG2Assignment
                 newOrder.TimeReceived = timeReceived;
                 newOrder.Id = newOrderId;
 
+                IceCreamMenu(); // init IceCreamMenu method to showcase menu
+
                 while (true)
                 {
-
-                    IceCreamMenu(); // init IceCreamMenu method to showcase menu
 
                     //prompt user to enter their ice cream order, retrieve ice cream obj 
                     IceCream newIceCream = CreateIceCream(validFlavours, validToppings, validWaffle);
 
-                    // append the new order to the orders.csv file
-
 
                     newOrder.AddIceCream(newIceCream);  //init AddIceCream() to add ice cream obj to the icecream list 
 
+                    while (true)
+                    {
                     //prompt the user if they would like to add another ice cream to their order 
                     Console.Write("Would you like to add another ice cream to your order? (Y/N) ");
                     string? nextIceCream = Console.ReadLine();
-
-                    if (nextIceCream.ToLower() == "y")
-                    {
-                        newIceCream = CreateIceCream(validFlavours, validToppings, validWaffle);
-                    } //repeat the steps 
-                    else if (nextIceCream.ToLower() == "n")
-                    {
-                        break;
+                        try
+                        {
+                            if (nextIceCream.ToLower() == "y")
+                            {
+                                newIceCream = CreateIceCream(validFlavours, validToppings, validWaffle);
+                                newOrder.AddIceCream(newIceCream); //add the next ice cream order to the ice cream list again 
+                            } //repeat the steps 
+                            else if (nextIceCream.ToLower() == "n")
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Invalid input, please enter either 'y' or 'n'.");
+                            }
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                        
                     } //continue to the next steps if they do not want another ice cream 
 
-                    orderList.Add(newOrder);
+                    orderList.Add(newOrder); 
                     QueueOrders(newOrder, customerChosen.MemberId, customerList, goldOrder, regularOrder ); //syn: add new order to orderList and queue (fix opn 2 dependency)
 
                     //display message to indicate order has been made successfully 
                     Console.WriteLine("Order has been made successfully!");
+                    break; 
                 }
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }//CreateCustomerOrder(): Valery
+
 
         static IceCream? CreateIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
@@ -492,7 +507,7 @@ namespace S10241870K_PRG2Assignment
                 try
                 {
                     //add an entirely new ice cream object to the order
-                    Console.Write("Select type: (Cup/Cone/Waffle): ");
+                    Console.Write("\nSelect type: (Cup/Cone/Waffle): ");
                     string opn = Console.ReadLine();
 
 
@@ -501,7 +516,7 @@ namespace S10241870K_PRG2Assignment
                         throw new ArgumentException("Please enter a valid option.");
                     }
 
-                    Console.Write("Scoops: ");
+                    Console.Write("Scoops (1-3): ");
                     int scoops = Convert.ToInt32(Console.ReadLine());
 
                     if (scoops < 0 || scoops > 3)
@@ -617,9 +632,6 @@ namespace S10241870K_PRG2Assignment
                     Console.WriteLine(ex.Message);
                 }
             }
-
-
-
         } //CreateIceCream(): Syn Kit
 
         static void IceCreamMenu()
