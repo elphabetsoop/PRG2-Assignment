@@ -38,7 +38,7 @@ namespace S10241870K_PRG2Assignment //Syn Kit
 
         public Order MakeOrder()
         {
-            //create an order object 
+            //val: create an order object for opn 4 
             Order order = new Order();
             CurrentOrder = order;
             return new Order();
