@@ -340,6 +340,7 @@ namespace S10241870K_PRG2Assignment
 
                     //add order to customer's CurrentOrder
                     c.CurrentOrder = order;
+                    return;
                 }
             }
         }//QueueOrders(): Syn Kit
@@ -709,8 +710,6 @@ namespace S10241870K_PRG2Assignment
         static void ModifyOrderDetails(List<Customer?> customerList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
             ListCustomer(customerList); //list customers
-
-
             try
             {
                 Console.Write("Select a customer: ");
@@ -740,6 +739,7 @@ namespace S10241870K_PRG2Assignment
                 {
                     //display mod menu
                     string[] modOpns = { "Modify ice cream", "Add new ice cream", "Remove ice cream" };
+                    int maxiCNo = c.CurrentOrder.IceCreamList.Count;
                     Console.WriteLine();
                     for (int i = 0; i < modOpns.Length; i++)
                     {
@@ -753,6 +753,11 @@ namespace S10241870K_PRG2Assignment
                     {
                         Console.Write("Choose an existing ice cream to modify: ");
                         int iCNo = Convert.ToInt32(Console.ReadLine());
+
+                        if (iCNo > maxiCNo)
+                        {
+                            throw new IndexOutOfRangeException($"Enter an ice cream number, from 1 to {maxiCNo}");
+                        }
                         Console.WriteLine();
                         IceCreamMenu();
                         Console.WriteLine();
@@ -773,7 +778,10 @@ namespace S10241870K_PRG2Assignment
                         {
                             Console.Write("Choose an ice cream to remove from order: ");
                             int iCNo = Convert.ToInt32(Console.ReadLine());
-
+                            if (iCNo > maxiCNo)
+                            {
+                                throw new IndexOutOfRangeException($"Enter an ice cream number, from 1 to {maxiCNo}");
+                            }
                             currentOrder.DeleteIceCream(iCNo - 1);
                         }
                         else
@@ -821,16 +829,21 @@ namespace S10241870K_PRG2Assignment
 
             // ### display
             //dequeue
-            if (goldOrder != null) //process gold queue
+            if (goldOrder.Count != 0) //process gold queue
             {
                 checkout = goldOrder.Peek();
                 goldOrder.Dequeue();
                 
             }
-            else //goldQueue is empty (null), process regular queue
+            else if (regularOrder.Count != 0)//goldQueue is empty (null), process regular queue
             {
                 checkout = regularOrder.Peek();
                 regularOrder.Dequeue();
+            }
+            else //both regular and gold queues are empty
+            {
+                Console.WriteLine("Both queues are currently empty");
+                return;
             }
 
             //display all ice creams in order
@@ -846,11 +859,11 @@ namespace S10241870K_PRG2Assignment
 
             //display membership status & points
             int cId = checkout.Id;
-            Customer? customer = null;
+            Customer customer = null;
 
-            foreach (Customer? c in customerList)
+            foreach (Customer c in customerList)
             {
-                if (c.CurrentOrder.Id == cId)
+                if (c.CurrentOrder != null && c.CurrentOrder.Id == cId)
                 {
                     customer = c;
                     break;
@@ -869,7 +882,7 @@ namespace S10241870K_PRG2Assignment
 
             // ### process order
             double finalBill = totalBill;
-            Console.WriteLine(customer.IsBirthday());
+            //Console.WriteLine(customer.IsBirthday());
             //check birthday
             if (customer.IsBirthday()) //true
             { 
@@ -883,6 +896,8 @@ namespace S10241870K_PRG2Assignment
                         freeIceCream = iC;
                     }
                 }
+
+                Console.WriteLine("Happy birthday! The most expensive ice cream in your order will be free.");
                 finalBill -= freeIceCream.CalculatePrice();            
             }
 
@@ -895,6 +910,8 @@ namespace S10241870K_PRG2Assignment
                 double priceFirstIC = firstIceCream.CalculatePrice();
                 finalBill -= priceFirstIC;
                 customer.Rewards.PunchCard += (checkout.IceCreamList.Count - 1); //-1 since alr "redeemed" one free ice cream
+
+                Console.WriteLine("You have completed your punchcard! Your 11th ice cream will be free.");
             }
             else
             {
@@ -912,19 +929,23 @@ namespace S10241870K_PRG2Assignment
             //offset bill with points depending on tier
             if (customer.Rewards.Tier.ToLower() == "silver" || customer.Rewards.Tier.ToLower() == "gold")
             {
-                int pointsRequired = (int)Math.Floor(finalBill / 0.02);
-                if (pointsRequired < currentPoints)
+                if (finalBill > 0) //case where finalBill is $0: 11th ice cream or birthday, dont nd to redeem points
                 {
-                    Console.Write($"You have {currentPoints} points. Would you like to redeem {pointsRequired} points to offset your bill? (y/n): ");
-                    string isRedeeming = Console.ReadLine();
-
-                    if (isRedeeming.ToLower() == "y")
+                    int pointsRequired = (int)Math.Floor(finalBill / 0.02);
+                    if (pointsRequired < currentPoints)
                     {
-                        customer.Rewards.Points -= pointsRequired;
-                        finalBill = 0;
-                        Console.WriteLine($"Points redeemed. You have {customer.Rewards.Points} points left.");
+                        Console.Write($"You have {currentPoints} points. Would you like to redeem {pointsRequired} points to offset your bill? (y/n): ");
+                        string isRedeeming = Console.ReadLine();
+
+                        if (isRedeeming.ToLower() == "y")
+                        {
+                            customer.Rewards.RedeemPoints(pointsRequired);
+                            finalBill = 0;
+                            Console.WriteLine($"Points redeemed. You have {customer.Rewards.Points} points left.");
+                        }
                     }
                 }
+                
             }
 
             Console.WriteLine($"Final bill: {finalBill:C}");
@@ -936,7 +957,7 @@ namespace S10241870K_PRG2Assignment
             {
                 //earn points
                 int pointsEarned = (int)Math.Floor(finalBill * 0.72);
-                customer.Rewards.Points += pointsEarned;
+               customer.Rewards.AddPoints(pointsEarned);
 
                 DateTime timeFulfilled = DateTime.Now;
                 Console.WriteLine($"Order fulfilled at {timeFulfilled}");
