@@ -822,11 +822,6 @@ namespace S10241870K_PRG2Assignment
         } //ModifyOrderDetails(): Syn Kit
 
 
-        
-
-
-
-
         // ### ADVANCED FEATURES ###
         //opn 7 advanced feature a): Syn Kit
         static void ProcessOrderAndCheckout(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer?> customerList)
@@ -835,16 +830,21 @@ namespace S10241870K_PRG2Assignment
 
             // ### display
             //dequeue
-            if (goldOrder != null) //process gold queue
+            if (goldOrder.Count != 0) //process gold queue
             {
                 checkout = goldOrder.Peek();
                 goldOrder.Dequeue();
-                
+
             }
-            else //goldQueue is empty (null), process regular queue
+            else if (regularOrder.Count != 0)//goldQueue is empty (null), process regular queue
             {
                 checkout = regularOrder.Peek();
                 regularOrder.Dequeue();
+            }
+            else //both regular and gold queues are empty
+            {
+                Console.WriteLine("Both queues are currently empty");
+                return;
             }
 
             //display all ice creams in order
@@ -860,11 +860,11 @@ namespace S10241870K_PRG2Assignment
 
             //display membership status & points
             int cId = checkout.Id;
-            Customer? customer = null;
+            Customer customer = null;
 
-            foreach (Customer? c in customerList)
+            foreach (Customer c in customerList)
             {
-                if (c.CurrentOrder.Id == cId)
+                if (c.CurrentOrder != null && c.CurrentOrder.Id == cId)
                 {
                     customer = c;
                     break;
@@ -879,14 +879,14 @@ namespace S10241870K_PRG2Assignment
             {
                 Console.WriteLine("Customer not found.");
             }
-            
+
 
             // ### process order
             double finalBill = totalBill;
-            Console.WriteLine(customer.IsBirthday());
+            //Console.WriteLine(customer.IsBirthday());
             //check birthday
             if (customer.IsBirthday()) //true
-            { 
+            {
                 IceCream freeIceCream = new Cup(); //random null IceCream Cup instance, only for processing
                 foreach (IceCream iC in checkout.IceCreamList)
                 {
@@ -897,7 +897,9 @@ namespace S10241870K_PRG2Assignment
                         freeIceCream = iC;
                     }
                 }
-                finalBill -= freeIceCream.CalculatePrice();            
+
+                Console.WriteLine("Happy birthday! The most expensive ice cream in your order will be free.");
+                finalBill -= freeIceCream.CalculatePrice();
             }
 
 
@@ -909,6 +911,8 @@ namespace S10241870K_PRG2Assignment
                 double priceFirstIC = firstIceCream.CalculatePrice();
                 finalBill -= priceFirstIC;
                 customer.Rewards.PunchCard += (checkout.IceCreamList.Count - 1); //-1 since alr "redeemed" one free ice cream
+
+                Console.WriteLine("You have completed your punchcard! Your 11th ice cream will be free.");
             }
             else
             {
@@ -922,23 +926,27 @@ namespace S10241870K_PRG2Assignment
 
             //redeem points       
             int currentPoints = customer.Rewards.Points;
-            
+
             //offset bill with points depending on tier
             if (customer.Rewards.Tier.ToLower() == "silver" || customer.Rewards.Tier.ToLower() == "gold")
             {
-                int pointsRequired = (int)Math.Floor(finalBill / 0.02);
-                if (pointsRequired < currentPoints)
+                if (finalBill > 0) //case where finalBill is $0: 11th ice cream or birthday, dont nd to redeem points
                 {
-                    Console.Write($"You have {currentPoints} points. Would you like to redeem {pointsRequired} points to offset your bill? (y/n): ");
-                    string isRedeeming = Console.ReadLine();
-
-                    if (isRedeeming.ToLower() == "y")
+                    int pointsRequired = (int)Math.Floor(finalBill / 0.02);
+                    if (pointsRequired < currentPoints)
                     {
-                        customer.Rewards.Points -= pointsRequired;
-                        finalBill = 0;
-                        Console.WriteLine($"Points redeemed. You have {customer.Rewards.Points} points left.");
+                        Console.Write($"You have {currentPoints} points. Would you like to redeem {pointsRequired} points to offset your bill? (y/n): ");
+                        string isRedeeming = Console.ReadLine();
+
+                        if (isRedeeming.ToLower() == "y")
+                        {
+                            customer.Rewards.RedeemPoints(pointsRequired);
+                            finalBill = 0;
+                            Console.WriteLine($"Points redeemed. You have {customer.Rewards.Points} points left.");
+                        }
                     }
                 }
+
             }
 
             Console.WriteLine($"Final bill: {finalBill:C}");
@@ -950,7 +958,7 @@ namespace S10241870K_PRG2Assignment
             {
                 //earn points
                 int pointsEarned = (int)Math.Floor(finalBill * 0.72);
-                customer.Rewards.Points += pointsEarned;
+                customer.Rewards.AddPoints(pointsEarned);
 
                 DateTime timeFulfilled = DateTime.Now;
                 Console.WriteLine($"Order fulfilled at {timeFulfilled}");
@@ -967,61 +975,86 @@ namespace S10241870K_PRG2Assignment
         {
             Dictionary<string, List<Order> > monthlyOrderDict = new Dictionary<string, List<Order>>();
             Dictionary<string, double> chargedAmtsDict = new Dictionary<string, double>();
+            List<int> years = new List<int>(); 
 
-
-            //prompt the user for the year 
-            Console.Write("Enter the year: ");
-            int year = Convert.ToInt32(Console.ReadLine());
-
-            //loop through all the orders in the orderlist 
-            foreach(Order order in orderList)
+            try
             {
-                if (order.TimeFulfilled != null) //check if the timefulfilled date is not null 
+                //prompt the user for the year
+                Console.Write("Enter the year: ");
+                int year = Convert.ToInt32(Console.ReadLine());
+                
+                foreach(Order order in orderList)
                 {
-                    if(DateTime.TryParse(order.TimeFulfilled.ToString(), out DateTime orderFulfilledDate))
+                    if (DateTime.TryParse(order.TimeFulfilled.ToString(), out DateTime orderFulfilledDate))
                     {
-                        if (orderFulfilledDate.Year == year) 
-                        {
-                            string month = orderFulfilledDate.ToString("MMMM");
+                        int orderFulfilledyear = orderFulfilledDate.Year;
+                        years.Add(orderFulfilledyear);
+                    }
+                }
+                if (year < years.Min() || year > years.Max())
+                {
+                    throw new ArgumentException("Year input is not within the orders fulfilled years."); 
+                }
 
-                            if (monthlyOrderDict.ContainsKey(month))
+                //loop through all the orders in the orderlist 
+                foreach (Order order in orderList)
+                {
+                    if (order.TimeFulfilled != null) //check if the timefulfilled date is not null 
+                    {
+                        if (DateTime.TryParse(order.TimeFulfilled.ToString(), out DateTime orderFulfilledDate))
+                        {
+                            if (orderFulfilledDate.Year == year)
                             {
-                                monthlyOrderDict[month].Add(order); 
+                                string month = orderFulfilledDate.ToString("MMMM");
+
+                                if (monthlyOrderDict.ContainsKey(month))
+                                {
+                                    monthlyOrderDict[month].Add(order);
+                                }
+                                else
+                                {
+                                    List<Order> orders = new List<Order>();
+                                    orders.Add(order);
+                                    monthlyOrderDict.Add(month, orders); //retrieve all order objs that were successfully fulfilled within the inputted year 
+                                }
+
                             }
-                            else
-                            {
-                                List<Order> orders = new List<Order>();
-                                orders.Add(order);
-                                monthlyOrderDict.Add(month, orders); //retrieve all order objs that were successfully fulfilled within the inputted year 
-                            }
-                           
                         }
                     }
                 }
-            }
 
-            //compute monthly charged amounts breakdown 
-            double totalMonthPrice = 0.0;
+                //compute monthly charged amounts breakdown 
+                double totalMonthPrice = 0.0;
 
-            //loop through all the order & month in the dictionary 
-            foreach (KeyValuePair<string, List<Order> > kvp in monthlyOrderDict)
-            {
-                foreach (Order order in kvp.Value)
+                //loop through all the order & month in the dictionary 
+                foreach (KeyValuePair<string, List<Order>> kvp in monthlyOrderDict)
                 {
-                    totalMonthPrice += order.CalculateTotal();
+                    foreach (Order order in kvp.Value)
+                    {
+                        totalMonthPrice += order.CalculateTotal();
+                    }
+
+                    chargedAmtsDict.Add(kvp.Key, totalMonthPrice);
                 }
 
-                chargedAmtsDict.Add(kvp.Key, totalMonthPrice); 
+                //compute total charged amounts for the input year & display both monthly breakdown & total year charged amount 
+                double totalChargedAmount = 0.0;
+                Console.WriteLine($"\nMonthly charged amounts breakdown & total charged amounts for the year {year}:");
+                foreach (KeyValuePair<string, double> kvp in chargedAmtsDict)
+                {
+                    Console.WriteLine($"{kvp.Key} {year}: ${kvp.Value:F2}");
+                    totalChargedAmount += kvp.Value;
+                    Console.WriteLine($"\nTotal: ${totalChargedAmount:F2}");
+                }
             }
-
-            //compute total charged amounts for the input year & display both monthly breakdown & total year charged amount 
-            double totalChargedAmount = 0.0;
-            Console.WriteLine($"\nMonthly charged amounts breakdown & total charged amounts for the year {year}:"); 
-            foreach (KeyValuePair<string, double> kvp in chargedAmtsDict)
+            catch (FormatException ex)
             {
-                Console.WriteLine($"{kvp.Key} {year}: ${kvp.Value:F2}");
-                totalChargedAmount += kvp.Value;
-                Console.WriteLine($"\nTotal: ${totalChargedAmount:F2}");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Please enter a valid year.");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
         } //DisplayMonthYearCharges(): Valery 
