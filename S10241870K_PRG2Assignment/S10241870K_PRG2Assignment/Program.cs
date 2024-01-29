@@ -16,6 +16,7 @@ using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
 using System.Security.Cryptography;
 using System.Collections;
+using System;
 
 namespace S10241870K_PRG2Assignment
 {
@@ -76,7 +77,7 @@ namespace S10241870K_PRG2Assignment
                 }
                 else if (opn == 8) //advanced 2
                 {
-                    //
+                    DisplayMonthYearCharges(orderList); 
                 }
                 else
                 {
@@ -442,6 +443,7 @@ namespace S10241870K_PRG2Assignment
                 Order newOrder = customerChosen.MakeOrder(); //init MakeOrder() and retrieve order obj 
                 newOrder.TimeReceived = timeReceived;
                 newOrder.Id = newOrderId;
+                newOrder.TimeFulfilled = null; 
 
                 IceCreamMenu(); // init IceCreamMenu method to showcase menu
 
@@ -469,7 +471,7 @@ namespace S10241870K_PRG2Assignment
                             else if (nextIceCream.ToLower() == "n")
                             {
                                 break;
-                            }
+                            } //continue to the next steps if they do not want another ice cream 
                             else
                             {
                                 throw new ArgumentException("Invalid input, please enter either 'y' or 'n'.");
@@ -480,7 +482,7 @@ namespace S10241870K_PRG2Assignment
                             Console.WriteLine(ex.Message);
                         }
                         
-                    } //continue to the next steps if they do not want another ice cream 
+                    } 
 
                     orderList.Add(newOrder); 
                     QueueOrders(newOrder, customerChosen.MemberId, customerList, goldOrder, regularOrder ); //syn: add new order to orderList and queue (fix opn 2 dependency)
@@ -959,5 +961,69 @@ namespace S10241870K_PRG2Assignment
             }
         } //ProcessOrderAndCheckout(): Syn Kit
 
+        //opn 8 advanced feature b): Valery 
+
+        static void DisplayMonthYearCharges(List<Order> orderList)
+        {
+            Dictionary<string, List<Order> > monthlyOrderDict = new Dictionary<string, List<Order>>();
+            Dictionary<string, double> chargedAmtsDict = new Dictionary<string, double>();
+
+
+            //prompt the user for the year 
+            Console.Write("Enter the year: ");
+            int year = Convert.ToInt32(Console.ReadLine());
+
+            //loop through all the orders in the orderlist 
+            foreach(Order order in orderList)
+            {
+                if (order.TimeFulfilled != null) //check if the timefulfilled date is not null 
+                {
+                    if(DateTime.TryParse(order.TimeFulfilled.ToString(), out DateTime orderFulfilledDate))
+                    {
+                        if (orderFulfilledDate.Year == year) 
+                        {
+                            string month = orderFulfilledDate.ToString("MMMM");
+
+                            if (monthlyOrderDict.ContainsKey(month))
+                            {
+                                monthlyOrderDict[month].Add(order); 
+                            }
+                            else
+                            {
+                                List<Order> orders = new List<Order>();
+                                orders.Add(order);
+                                monthlyOrderDict.Add(month, orders); //retrieve all order objs that were successfully fulfilled within the inputted year 
+                            }
+                           
+                        }
+                    }
+                }
+            }
+
+            //compute monthly charged amounts breakdown 
+            double totalMonthPrice = 0.0;
+
+            //loop through all the order & month in the dictionary 
+            foreach (KeyValuePair<string, List<Order> > kvp in monthlyOrderDict)
+            {
+                foreach (Order order in kvp.Value)
+                {
+                    totalMonthPrice += order.CalculateTotal();
+                }
+
+                chargedAmtsDict.Add(kvp.Key, totalMonthPrice); 
+            }
+
+            //compute total charged amounts for the input year & display both monthly breakdown & total year charged amount 
+            double totalChargedAmount = 0.0;
+            Console.WriteLine($"\nMonthly charged amounts breakdown & total charged amounts for the year {year}:"); 
+            foreach (KeyValuePair<string, double> kvp in chargedAmtsDict)
+            {
+                Console.WriteLine($"{kvp.Key} {year}: ${kvp.Value:F2}");
+                totalChargedAmount += kvp.Value;
+                Console.WriteLine($"\nTotal: ${totalChargedAmount:F2}");
+            }
+
+        } //DisplayMonthYearCharges(): Valery 
     }
 }
