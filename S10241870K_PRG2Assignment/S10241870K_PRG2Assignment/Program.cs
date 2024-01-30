@@ -42,46 +42,46 @@ namespace S10241870K_PRG2Assignment
 
             while (true)
             {
-                int opn = DisplayMenu();
+                int opn = DisplayMenu(); 
                 if (opn == 0)
                 {
                     break;
                 }
-                else if (opn == 1)
+                else if (opn == 1) //List all customers
                 {
                     ListCustomer(customerList);
                 }
-                else if (opn == 2)
+                else if (opn == 2) //List all current orders
                 {
                     ListCurrentOrders(orders.Item1, orders.Item2);
                 }
-                else if (opn == 3)
+                else if (opn == 3) //Register a new customer
                 {
                     RegisterCustomer(customerList); 
                 }
-                else if (opn == 4)
+                else if (opn == 4) //Create a customer's order
                 {
                     CreateCustomerOrder(orders.Item1, orders.Item2, customerList, orderList, validFlavours, validWaffle, validToppings); 
                 }
-                else if (opn == 5)
+                else if (opn == 5) //Display order details of a customer
                 {
                     DisplayOrderDetails(customerList);
                 }
-                else if (opn == 6)
+                else if (opn == 6) //Modify order details
                 {
                     ModifyOrderDetails(customerList, validFlavours, validToppings, validWaffle);
                 }
-                else if (opn == 7) //advanced 1
+                else if (opn == 7) //Process an order and checkout: advanced 1
                 {
                     ProcessOrderAndCheckout(orders.Item1, orders.Item2, customerList, yearlyExpenses);
                 }
-                else if (opn == 8) //advanced 2
+                else if (opn == 8) //Display monthly charged amounts breakdown & total charged amounts for the year: advanced 2
                 {
                     DisplayMonthYearCharges(orderList,yearlyExpenses);
                 }
                 else
                 {
-                    Console.WriteLine("Invalid Option. Please try again.");
+                    Console.WriteLine("Invalid Option. Please try again."); //opn not 0-8
                 }
 
                 Console.WriteLine();
@@ -129,7 +129,7 @@ namespace S10241870K_PRG2Assignment
                     Console.WriteLine();
                     return opn;
                 }
-                catch (FormatException)
+                catch (FormatException) //not a number
                 {
                     Console.WriteLine("Invalid option. Please enter a number.");
                 }
@@ -287,12 +287,13 @@ namespace S10241870K_PRG2Assignment
                             {
                                 order.AddIceCream(iceCream);
                                 orderList.Add(order);
+                                Customer c = customerList.Find(x => x.MemberId == memberId); //get customer obj w memberId in question
 
                                 if (string.IsNullOrEmpty(orderInfo[3])) //time fulfilled is blank, pending order
                                 {
                                     QueueOrders(order, memberId, customerList, goldOrder, regularOrder);
-                                    Customer c = customerList.Find(x => x.MemberId == memberId);
-                                    c.CurrentOrder = order;
+                                    
+                                    c.CurrentOrder = order; //append order to customer's CurrentOrder
                                 }
                                 else //time fulfilled not blank, 
                                 {
@@ -300,11 +301,7 @@ namespace S10241870K_PRG2Assignment
                                     order.TimeFulfilled = timeFulfilled;
 
                                     //add order to OrderHistory list, alr fulfilled
-                                    foreach (Customer? c in customerList)
-                                    {
-                                        if (c.MemberId == memberId)
-                                            c.OrderHistory.Add(order);
-                                    }
+                                    c.OrderHistory.Add(order);
                                 }
                             }
                         }
@@ -328,10 +325,10 @@ namespace S10241870K_PRG2Assignment
         } //InitOrders(): Syn Kit
 
         static void QueueOrders(Order order, int memberId, List<Customer> customerList, Queue<Order> goldOrder, Queue<Order> regularOrder)
-        {
+        { 
+            /* adds orders from orderList to respective queues */
             foreach (Customer c in customerList)
             {
-                //Console.WriteLine(c + $"\t{c.Rewards}");
                 if (c.MemberId == memberId)
                 {
                     //add order to respective queues
@@ -352,7 +349,8 @@ namespace S10241870K_PRG2Assignment
 
 
         static void ListCurrentOrders(Queue<Order> goldOrder, Queue<Order> regularOrder)
-        {
+        { 
+            /* display orders in queues */
             Console.WriteLine("GOLD QUEUE");
             Console.WriteLine($"{"Order ID",-15} {"Time received",-25}{"Ice cream(s)",-15}");
             foreach (Order gold in goldOrder)
@@ -503,6 +501,7 @@ namespace S10241870K_PRG2Assignment
 
         static IceCream? CreateIceCream(List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
+            /* prompts user for ice cream details, creates and returns ice cream obj */
             IceCream newIceCream = null; //init null IceCream object
             List<string> validOpns = new List<string> { "cone", "cup", "waffle" };
 
@@ -515,7 +514,7 @@ namespace S10241870K_PRG2Assignment
                     string opn = Console.ReadLine();
 
 
-                    if (validOpns.Find(op => op == opn.ToLower()) == null) //invalid option
+                    if (validOpns.Find(op => op == opn.ToLower()) == null) //invalid option: not Cup/Cone/Waffle
                     {
                         throw new ArgumentException("Please enter a valid option.");
                     }
@@ -671,6 +670,7 @@ namespace S10241870K_PRG2Assignment
         //opn 5 basic feature 5: Syn Kit
         static void DisplayOrderDetails(List<Customer?> customerList)
         {
+            /* displays order details: order history and current orders */
             ListCustomer(customerList); //list customers
             while (true)
             {
@@ -686,7 +686,7 @@ namespace S10241870K_PRG2Assignment
 
                     Console.WriteLine();
                     Console.WriteLine($"Order History of Customer {cNo}");
-                    Customer? c = customerList[cNo - 1];
+                    Customer? c = customerList[cNo - 1]; //get customer
                     Console.WriteLine(c);
                     Console.WriteLine();
 
@@ -726,7 +726,7 @@ namespace S10241870K_PRG2Assignment
 
                     break;
                 }
-                catch (FormatException)
+                catch (FormatException) //not a number
                 {
                     Console.WriteLine("Please enter a number.");
                 }
@@ -740,6 +740,7 @@ namespace S10241870K_PRG2Assignment
         //opn 6 basic feature 6: Syn Kit
         static void ModifyOrderDetails(List<Customer?> customerList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
+            /* modifies current order: modify ice cream; add ice cream; delete ice cream */
             ListCustomer(customerList); //list customers
             try
             {
@@ -847,15 +848,11 @@ namespace S10241870K_PRG2Assignment
         } //ModifyOrderDetails(): Syn Kit
 
 
-        
-
-
-
-
         // ### ADVANCED FEATURES ###
         //opn 7 advanced feature a): Syn Kit
         static void ProcessOrderAndCheckout(Queue<Order> goldOrder, Queue<Order> regularOrder, List<Customer?> customerList, Dictionary<int, Dictionary<int, double>> yearlyExpenses)
         {
+            /* dequeue and process/checkout first order in goldOrders queue, else regularOrders queue */
             Order checkout = null;
 
             // ### display
@@ -1020,7 +1017,6 @@ namespace S10241870K_PRG2Assignment
                         yearlyExpenses[year][month] += disc;
                     }
                 }
-
             }
         } //ProcessOrderAndCheckout(): Syn Kit
 
