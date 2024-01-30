@@ -1087,11 +1087,13 @@ namespace S10241870K_PRG2Assignment
                 //loop through all the month & order in the dictionary 
                 foreach (KeyValuePair<string, List<Order>> kvp in monthlyOrderDict)
                 {
+                    //calculate the monthly charges 
                     foreach (Order order in kvp.Value)
                     {
                         totalMonthPrice += order.CalculateTotal();
                     }
 
+                    //exclude the free ice cream that is charged in the monthly charges 
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     int intMonth = DateTime.ParseExact(kvp.Key, "MMMM", formatInfo).Month; //parse the month name to the month no. 
                     double monthlyExpenses = 0;
