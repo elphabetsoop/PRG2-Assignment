@@ -1028,9 +1028,12 @@ namespace S10241870K_PRG2Assignment
         //opn 8 advanced feature b): Valery 
         static void DisplayMonthYearCharges(List<Order> orderList, Dictionary<int, Dictionary<int, double>> yearlyExpenses)
         {
-            Dictionary<string, List<Order>> monthlyOrderDict = new Dictionary<string, List<Order>>();
-            Dictionary<string, double> chargedAmtsDict = new Dictionary<string, double>();
-            List<int> years = new List<int>();
+             //init month and the orders made in that month 
+             Dictionary<string, List<Order>> monthlyOrderDict = new Dictionary<string, List<Order>>();
+             //init month and the total amount charged in that month 
+             Dictionary<string, double> chargedAmtsDict = new Dictionary<string, double>();
+             //init all the years orders have been made 
+             List<int> years = new List<int>();
 
             try
             {
