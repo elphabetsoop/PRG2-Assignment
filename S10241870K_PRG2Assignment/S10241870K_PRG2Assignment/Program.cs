@@ -547,9 +547,9 @@ namespace S10241870K_PRG2Assignment
                         {
                             throw new ArgumentException("Invalid flavour. Please try again.");
                         }
-                        else 
+                        else
                         {
-                            if (!string.IsNullOrEmpty(f)) 
+                            if (!string.IsNullOrEmpty(f))
                             {
                                 if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
                                     isPremium = true;
@@ -572,18 +572,20 @@ namespace S10241870K_PRG2Assignment
                             "Number of toppings must be less than or equals to 4");
                     }
 
+                    
                     foreach (string t in tL)
                     {
-                        if (validToppings.IndexOf(t.ToLower()) == -1) //check if topping is valid
+                        if (!string.IsNullOrEmpty(t))
                         {
-                            throw new ArgumentException("Invalid topping. Please try again.");
+                            if (validToppings.IndexOf(t.ToLower()) == -1) //check if topping is valid
+                            {
+                                throw new ArgumentException("Invalid topping. Please try again.");
+                            }
                         }
                         else
                         {
-                            if (!string.IsNullOrEmpty(t))
-                            {
+                            if (validToppings.IndexOf(t.ToLower()) != -1)
                                 toppings.Add(new Topping(t));
-                            }
                         }
                     }
 
