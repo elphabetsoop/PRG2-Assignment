@@ -543,14 +543,21 @@ namespace S10241870K_PRG2Assignment
                     foreach (string f in fL)
                     {
                         bool isPremium;
-                        if (!string.IsNullOrEmpty(f) &&
-                            (validFlavours.IndexOf(f.ToLower()) != -1)) //check if flavour is valid
+                        if (validFlavours.IndexOf(f.ToLower()) == -1) //check if flavour is valid
                         {
-                            if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
-                                isPremium = true;
-                            else
-                                isPremium = false;
-                            flavours.Add(new Flavour(f, isPremium, 1));
+                            throw new ArgumentException("Invalid flavour. Please try again.");
+                        }
+                        else 
+                        {
+                            if (!string.IsNullOrEmpty(f)) 
+                            {
+                                if (validFlavours.IndexOf(f.ToLower()) >= 3) //premium
+                                    isPremium = true;
+                                else
+                                    isPremium = false;
+                                flavours.Add(new Flavour(f, isPremium, 1));
+                            }
+
                         }
                     }
 
@@ -567,9 +574,16 @@ namespace S10241870K_PRG2Assignment
 
                     foreach (string t in tL)
                     {
-                        if (!string.IsNullOrEmpty(t) && (validToppings.IndexOf(t.ToLower()) != -1))
+                        if (validToppings.IndexOf(t.ToLower()) == -1) //check if topping is valid
                         {
-                            toppings.Add(new Topping(t));
+                            throw new ArgumentException("Invalid topping. Please try again.");
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(t))
+                            {
+                                toppings.Add(new Topping(t));
+                            }
                         }
                     }
 
