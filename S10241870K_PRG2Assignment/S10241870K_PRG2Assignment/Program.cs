@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using static System.Formats.Asn1.AsnWriter;
 using System.Security.Cryptography;
+using System.Globalization;
 
 namespace S10241870K_PRG2Assignment
 {
@@ -76,7 +77,7 @@ namespace S10241870K_PRG2Assignment
                 }
                 else if (opn == 8) //advanced 2
                 {
-                    DisplayMonthYearCharges(orderList);
+                    DisplayMonthYearCharges(orderList,yearlyExpenses);
                 }
                 else
                 {
@@ -1029,7 +1030,7 @@ namespace S10241870K_PRG2Assignment
                 }
                 if (year < years.Min() || year > years.Max())
                 {
-                    throw new ArgumentException("Year input is not within the orders fulfilled years.");
+                    throw new ArgumentException("No orders has been fulfilled in that year.");
                 }
 
                 //loop through all the orders in the orderlist 
@@ -1062,7 +1063,7 @@ namespace S10241870K_PRG2Assignment
                 //compute monthly charged amounts breakdown 
                 double totalMonthPrice = 0.0;
 
-                //loop through all the order & month in the dictionary 
+                //loop through all the month & order in the dictionary 
                 foreach (KeyValuePair<string, List<Order>> kvp in monthlyOrderDict)
                 {
                     foreach (Order order in kvp.Value)
@@ -1070,8 +1071,9 @@ namespace S10241870K_PRG2Assignment
                         totalMonthPrice += order.CalculateTotal();
                     }
 
-                    //syn: added expenses
-                    double monthlyExpenses = yearlyExpenses[year][/*month in integer*/]; //################ HERE ############################
+                    DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
+                    int intMonth = DateTime.ParseExact(kvp.Key, "MMMM", formatInfo).Month; //parse the month name to the month no. 
+                    double monthlyExpenses = yearlyExpenses[year][intMonth]; 
                     chargedAmtsDict.Add(kvp.Key, totalMonthPrice-monthlyExpenses);
                 }
 
