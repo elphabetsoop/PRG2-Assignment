@@ -291,6 +291,8 @@ namespace S10241870K_PRG2Assignment
                                 if (string.IsNullOrEmpty(orderInfo[3])) //time fulfilled is blank, pending order
                                 {
                                     QueueOrders(order, memberId, customerList, goldOrder, regularOrder);
+                                    Customer c = customerList.Find(x => x.MemberId == memberId);
+                                    c.CurrentOrder = order;
                                 }
                                 else //time fulfilled not blank, 
                                 {
@@ -440,7 +442,7 @@ namespace S10241870K_PRG2Assignment
                 Customer customerChosen = customerList[cusNo - 1]; //retrieve selected customer 
 
                 DateTime timeReceived = DateTime.Now;
-                int newOrderId = orderList.Count;
+                int newOrderId = orderList.Count + 1;
                 Order newOrder = customerChosen.MakeOrder(); //init MakeOrder() and retrieve order obj 
                 newOrder.TimeReceived = timeReceived;
                 newOrder.Id = newOrderId;
@@ -705,7 +707,23 @@ namespace S10241870K_PRG2Assignment
                     {
                         Console.WriteLine($"Customer {cNo} does not have any order history.");
                     }
-                    
+
+                    Console.WriteLine($"Current orders of Customer {cNo}:");
+                    if (c.CurrentOrder != null)
+                    {
+                        Console.WriteLine(c.CurrentOrder);
+                        foreach (IceCream iC in c.CurrentOrder.IceCreamList)
+                        {
+                            Console.WriteLine(iC);
+                        }
+
+                        Console.WriteLine();
+                    }
+                    else //CUrrentOrder is empty
+                    {
+                        Console.WriteLine($"Customer {cNo} does not have any current orders.");
+                    }
+
                     break;
                 }
                 catch (FormatException)
@@ -1073,7 +1091,15 @@ namespace S10241870K_PRG2Assignment
 
                     DateTimeFormatInfo formatInfo = new DateTimeFormatInfo();
                     int intMonth = DateTime.ParseExact(kvp.Key, "MMMM", formatInfo).Month; //parse the month name to the month no. 
-                    double monthlyExpenses = yearlyExpenses[year][intMonth]; 
+                    double monthlyExpenses = 0;
+
+                    if (yearlyExpenses.ContainsKey(year))
+                    {
+                        if (yearlyExpenses[year].ContainsKey(intMonth))
+                        {
+                            monthlyExpenses = yearlyExpenses[year][intMonth];
+                        }
+                    }
                     chargedAmtsDict.Add(kvp.Key, totalMonthPrice-monthlyExpenses);
                 }
 
