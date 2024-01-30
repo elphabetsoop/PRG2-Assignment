@@ -189,6 +189,7 @@ namespace S10241870K_PRG2Assignment
         //opn 2 basic feature 2: Syn Kit
         static (Queue<Order>, Queue<Order>) InitOrders(List<Customer?> customerList, List<Order> orderList, List<string> validFlavours, List<string> validToppings, List<string> validWaffle)
         {
+            /* read order.csv, create order objects & add to orderList and enqueue to respective queues */
             string orderFile = "orders.csv";
 
             Queue<Order> goldOrder = new Queue<Order>();
